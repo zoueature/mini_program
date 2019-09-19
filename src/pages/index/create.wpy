@@ -1,0 +1,68 @@
+<template lang="wxml">
+  <div class="container">
+    <div class="flag-icon">
+      <image src="../../assets/img/add-flag.jpeg" alt=""></image>
+    </div>
+    <div class="create-form">
+  
+      <div class="section">
+        <span class="title">Flag</span>
+        <input name="input" placeholder="立下一个Flag" v-bind:aria-valuetext="value">
+      </div>
+      <div class="section section_gap">
+        <div class="title">周期</div>
+        <slider name="slider" show-value ></slider>
+      </div>
+      <div class="section section_gap">
+        <div class="title">打卡周期</div>
+        <slider name="slider" show-value ></slider>
+      </div>
+      <div class="section section_gap">
+        <span class="title">打卡提醒</span>
+        <switch name="switch"/>
+      </div>
+      <div class="section section_gap">
+        <button type="primary">确定</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+  .flag-icon {
+    width: 94%;
+    height: 100px;
+    margin:  10rpx auto;
+  }
+  .flag-icon image {
+    width: 100%;
+    height: 100%;
+  }
+  .create-form {
+    width: 94%;
+    margin: 0 auto;
+    color: #777777;
+    font-size: 12px;
+  }
+  .create-form input {
+    display: inline;
+  }
+  .section .title {
+    font-size: 14px;
+    color: #333333;
+  }
+  .section_gap {
+    margin-top: 50rpx;
+  }
+</style>
+
+<config>
+
+</config>
+<script>
+  import wepy from 'wepy'
+  export default class create extends wepy.page {
+  }
+</script>
+
+

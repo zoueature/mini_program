@@ -1,0 +1,61 @@
+<style lang="less">
+.container {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+  div {
+    display: block;
+  }
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/mine/me',
+      'pages/index/index',
+      'pages/index/create'
+    ],
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      color: 'rgb(6, 6, 6)',
+      selectedColor: '#6da3fd',
+      borderStyle: 'black',
+      list: [
+        {
+          selectedIconPath: 'assets/main/home-ed.png',
+          iconPath: 'assets/main/home.png',
+          pagePath: 'pages/index/index',
+          text: '创建'
+        },
+        {
+          selectedIconPath: 'assets/main/home-ed.png',
+          iconPath: 'assets/main/home.png',
+          pagePath: 'pages/index/index',
+          text: '首页'
+        },
+        {
+          selectedIconPath: 'assets/main/home-ed.png',
+          iconPath: 'assets/main/home.png',
+          pagePath: 'pages/mine/me',
+          text: '我的'
+        }
+      ]
+    }
+  }
+  globalData = {
+    userInfo: null
+  }
+}
+</script>

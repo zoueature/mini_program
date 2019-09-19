@@ -1,0 +1,102 @@
+<template>
+  <div class="container">
+    <div class="mine-info">
+      <div class="mime-info-meta">
+        <div class="info-avatar">
+          <image src="{{userInfo.avatarUrl}}" alt=""></image>
+        </div>
+        <div class="info-name">
+          <span>{{userInfo.nickName}}</span>
+        </div>
+      </div>
+      <div class="mine-info-milestone">
+        <div class="milestone-done">
+        
+        </div>
+        <div class="milestone-doing">
+        
+        </div>
+      </div>
+    </div>
+    <div wx:if="{{canIUse}}">
+      <button open-type="getUserInfo"
+              bindgetuserinfo="bindGetUserInfo">
+        授权登录
+      </button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+  .mine-info {
+    width: 100%;
+    height: 200rpx;
+  }
+  .mine-info div {
+    float: left;
+    width: 50%;
+    height: 100%;
+  }
+  .mine-info-milestone {
+    background-color: yellow;
+  }
+  .mime-info-meta .info-avatar {
+    width: 150rpx;
+    height: 150rpx;
+    overflow: hidden;
+    border-radius: 200rpx;
+    margin-left: 25rpx;
+    margin-top: 25rpx;
+    border: 1px solid #dddddd;
+  }
+  .info-avatar image {
+    width: 100%;
+    height: 100%;
+  }
+  .info-name {
+    font-size: 16px;
+    color: #333333;
+    text-align: center;
+    line-height: 200rpx;
+    overflow: hidden;
+  }
+</style>
+
+<script>
+  import wepy from 'wepy'
+  import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline'
+  
+  
+  export default class me extends wepy.page {
+    data = {
+      userInfo: {
+      },
+      canIUse: wx.canIUse('button.open-type.getUserInfo') && this.userInfo === {}
+    }
+    components = {
+      // timeline: Timeline,
+      // timelineItem: TimelineItem,
+      // timelineTitle: TimelineTitle
+    }
+    onLoad() {
+      let self = this
+      wx.getUserInfo({
+        success: function (res) {
+          let userInfo = res.rawData
+          self.userInfo = JSON.parse(userInfo)
+          console.log(self.userInfo)
+          self.$apply()
+          console.log(self.canIUse)
+        }
+      })
+    }
+    methods = {
+      bindGetUserInfo (e) {
+        this.$parent.globalData.userInfo = e.detail.userInfo
+        this.userInfo = e.detail.userInfo
+      }
+    }
+  }
+</script>
+
+
