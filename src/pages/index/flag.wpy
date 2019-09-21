@@ -66,7 +66,7 @@
     background-color: #fefefe;
     width: 98%;
     height: 135rpx;
-    margin: 16rpx auto 0 auto;
+    margin: 25rpx auto 0 auto;
     position: relative;
     border: 1rpx solid #cccccc;
     border-radius: 10rpx;

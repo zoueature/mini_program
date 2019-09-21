@@ -81,10 +81,10 @@
     animation: bolang 1600ms infinite;
   }
   .bolang1 {
-    animation: bolang 3000ms infinite;
+    animation: bolang 2800ms infinite;
   }
   .bolang2 {
-    animation: bolang 2500ms infinite;
+    animation: bolang 2200ms infinite;
   }
   .bolang3 {
     animation: bolang 2000ms infinite;
