@@ -1,236 +1,253 @@
 <template>
   <div class="container">
-    <div class="create-button">
-      <navigator url="/pages/index/create">
-        <div class="create-real-button">
-          <p>{{timeInfo.year+'年'+timeInfo.month+'月'+timeInfo.day+'日'}}</p><br/>
-          <p>{{timeInfo.hour+'小时'+timeInfo.minute+'分'+timeInfo.second+'秒'}}</p>
-        </div>
-      </navigator>
-      <div class="bolang b1"></div>
-      <div class="bolang b2"></div>
-      <div class="bolang b3"></div>
-      <div class="bolang b4"></div>
+    <div class="flag-cate">
+      <div wx:for="{{cateList}}" wx:for-index="index" wx:for-item="category" class="flag-cate-item">
+        <span>{{category.name}}</span>
+      </div>
     </div>
+    <div wx:for="{{flagList}}" wx:for-index="index" wx:for-item="flag" class="flag-item">
+      <div class="flag-icon">
+    
+      </div>
+      <div class="flag-name">
+        <span>{{flag.name}}</span>
+        <div class="flag-create-time">
+          <span>{{flag.createTime}}</span>
+        </div>
+      </div>
+      <div class="flag-status">
+    
+      </div>
+      <div class="flag-process">
+        <div class="flag-process-done">
+      
+        </div>
+      </div>
+    </div>
+    <div class="blank"></div>
   </div>
 </template>
 
 <style scoped>
-  .create-button {
-    position: fixed;
+  .container {
     width: 100%;
     height: 100%;
-    background-color: #fcfcfc;
+    background-color: #f7f7f7;
+    position: absolute;
   }
-  .create-real-button {
+  .flag-cate {
+    width: 100%;
+    height: 86rpx;
+    padding-top: 20rpx;
+    padding-bottom: 20rpx;
+    margin: 0 auto;
+    background-color: #00c7cc;
+    position: relative;
+  }
+  .flag-cate-item {
+    width: 18%;
+    height: 70rpx;
+    overflow: hidden;
+    position: relative;
+    line-height: 70rpx;
+    text-align: center;
+    margin-top: 7rpx;
+    float: left;
+    margin-left: 1.25%;
+    font-size: 13px;
+    background-color: #FFFFFF;
+    border: 1px solid #dedede;
+    color: #555555;
+    border-radius: 35rpx;
+  }
+  .flag-item {
+    background-color: #fefefe;
+    width: 98%;
+    height: 135rpx;
+    margin: 16rpx auto 0 auto;
+    position: relative;
+    border: 1rpx solid #cccccc;
+    border-radius: 10rpx;
+  }
+  .flag-item div {
+    float: left;
+  }
+  .flag-icon {
+    width: 90rpx;
+    height: 90rpx;
+    background-color: #777777;
+    margin-left: 3%;
+    margin-top: 18rpx;
+    border-radius: 90rpx;
+    overflow: hidden;
+  }
+  .flag-name {
+    margin-left: 4%;
+    width: 45%;
+    height: 100rpx;
+    margin-top: 7rpx;
     font-size: 16px;
-    width: 450rpx;
-    height: 450rpx;
-    border-radius: 450rpx;
+    line-height: 65rpx;
+    color: #555555;
+  }
+  .flag-create-time {
+    width: 45%;
+    height: 30rpx;
     position: absolute;
-    margin: auto;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #519dda;
-    text-align: center;
-    line-height: 450rpx;
-    z-index: 999;
-    color: #FFFFFF;
+    bottom: 30rpx;
+    overflow: hidden;
+    font-size: 12px;
+    color: #777777;
+    line-height: 30rpx;
   }
-  .b1 {
-    width: 300rpx;
-    height: 300rpx;
-    border-radius: 400rpx;
-  }
-  .b2 {
-    width: 350rpx;
-    height: 350rpx;
-    border-radius: 500rpx;
-  }
-  .b3 {
-    width: 425rpx;
-    height: 425rpx;
-    border-radius: 500rpx;
-  }
-  .b4 {
-    width: 500rpx;
-    height: 500rpx;
-    border-radius: 500rpx;
-  }
-  .bolang {
+  .flag-process {
+    width: 98%;
+    height: 7%;
+    background-color: #dddddd;
+    border-radius: 125rpx;
     position: absolute;
-    margin: auto;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #6da3fd;
-    text-align: center;
-    line-height: 300rpx;
-    animation: bolang 1600ms infinite;
+    left: 1%;
+    bottom: 8rpx;
   }
-  @keyframes bolang {
-    0% {
-      transform: scale(0.5);
-      opacity: 0.1;
-    }
-    12% {
-      transform: scale(0.6);
-      opacity: 0.15;
-    }
-    25% {
-      transform: scale(0.7);
-      opacity: 0.2;
-    }
-    37% {
-      transform: scale(0.8);
-      opacity: 0.25;
-    }
-    50% {
-      transform: scale(0.9);
-      opacity: 0.3;
-    }
-    63% {
-      transform: scale(0.8);
-      opacity: 0.35;
-    }
-    75% {
-      transform: scale(0.7);
-      opacity: 0.4;
-    }
-    87% {
-      transform: scale(0.6);
-      opacity: 0.3;
-    }
-    100% {
-      transform: scale(0.5);
-      opacity: 0.2;
-    }
+  .flag-process-done {
+    width: 60%;
+    height: 100%;
+    background-color: green;
+    border-radius: 125rpx;
+  }
+  .blank {
+    height: 70rpx;
   }
 </style>
-
-<config>
-
-</config>
 <script>
     import wepy from 'wepy'
-    const month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    export default class index extends wepy.page {
+    
+    export default class flag extends wepy.page {
+      config = {
+        navigationBarBackgroundColor: '#00c7cc'
+      }
       data = {
-        birthday: '1994-10-13 00:18:56',
-        lastTime: 0,
-        timeInfo: {
-          year: 0,
-          month: 0,
-          day: 0,
-          hour: 0,
-          minute: 0,
-          second: 0
-        }
+        cateList: [
+          {
+            name: '生活'
+          },
+          {
+            name: '学习成长'
+          },
+          {
+            name: '运动健身'
+          },
+          {
+            name: '早睡早起'
+          },
+          {
+            name: '早睡早起'
+          }
+        ],
+        flagList: [
+          {
+            id: 1,
+            icon: '',
+            name: '每天跑步5公里',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-19 09:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          },
+          {
+            id: 2,
+            icon: '',
+            name: '每天1小时阅读',
+            status: 0,
+            period: 30,
+            last: 10,
+            createTime: '2019-09-17 18:23:18'
+          }
+        ]
       }
       onLoad() {
-        let formatDate = this.birthday.replace('/-/g', '/')
-        let birthdayDate = new Date(formatDate)
-        let timestamp = birthdayDate.getTime()
-        let nowDate = new Date()
-        let lastTime = parseInt(((nowDate.getTime()) - timestamp) / 1000)
-        this.lastTime = lastTime
-        let timeInfo = this.calTimeInfo(birthdayDate, nowDate)
-        this.timeInfo = timeInfo
-        let self = this
-        let nowMonth = nowDate.getMonth()
-        let nowYear = nowDate.getFullYear()
-        setInterval(function (nowMonth, nowYear) {
-          let step = 1
-          timeInfo = self.timeInfo
-          if (step > 60) {
-            return false
-          }
-          timeInfo.second += step
-          if (timeInfo.second >= 60) {
-            timeInfo.minute ++
-            timeInfo.second -= 60
-          }
-          if (timeInfo.minute > 60) {
-            timeInfo.hour ++
-            timeInfo.minute -= 60
-          }
-          if (timeInfo.hour > 24) {
-            timeInfo.day ++
-            timeInfo.hour -= 24
-          }
-          let monthDay = month[nowMonth]
-          if (nowYear / 4 === 0 && nowMonth === 1) {
-            monthDay = 29
-          }
-          if (timeInfo.day > monthDay) {
-            timeInfo.month ++
-            timeInfo.day -= monthDay
-          }
-          if (timeInfo.month > 12) {
-            timeInfo.year ++
-            timeInfo.month -= 12
-          }
-          self.$apply()
-        }, 1000)
-        this.$apply()
-      }
-      /** */
-      calTimeInfo(timeOrigin, timeNow) {
-        let nowYear = timeNow.getFullYear()
-        let originYear = timeOrigin.getFullYear()
-        let nowMonth = timeNow.getMonth()
-        let originMonth = timeOrigin.getMonth()
-        let nowDay = timeNow.getDay()
-        let originDay = timeOrigin.getDay()
-        let nowHour = timeNow.getHours()
-        let originHour = timeOrigin.getHours()
-        let nowMinute = timeNow.getMinutes()
-        let originMinute = timeOrigin.getMinutes()
-        let nowSecond = timeNow.getSeconds()
-        let originSecond = timeOrigin.getSeconds()
-        console.log(nowMonth)
-        let diffYear = nowYear - originYear
-        let diffMonth = nowMonth - originMonth
-        let diffDay = nowDay - originDay
-        let diffHour = nowHour - originHour
-        let diffMinute = nowMinute - originMinute
-        let diffSecond = nowSecond - originSecond
-        
-        if (diffMonth <= 0) {
-          diffMonth += 12
-          diffYear --
-        }
-        if (diffDay <= 0) {
-          diffMonth --
-          let monthDay = month[nowMonth]
-          if (nowYear / 4 === 0 && nowMonth === 1) {
-            monthDay = 29
-          }
-          diffDay += monthDay
-        }
-        if (diffHour <= 0) {
-          diffDay --
-          diffHour += 24
-        }
-        if (diffMinute <= 0) {
-          diffHour --
-          diffMinute += 60
-        }
-        if (diffSecond <= 0) {
-          diffMinute --
-          diffSecond += 60
-        }
-        return {
-          year: diffYear,
-          month: diffMonth,
-          day: diffDay,
-          hour: diffHour,
-          minute: diffMinute,
-          second: diffSecond
-        }
+      
       }
     }
 </script>

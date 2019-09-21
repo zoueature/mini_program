@@ -3,12 +3,14 @@
     <div class="create-button">
       <navigator url="/pages/index/create">
         <div class="create-real-button">
-          <span> {{lastTime}}</span>
+          <p>{{timeInfo.year+'年'+timeInfo.month+'月'+timeInfo.day+'日'}}</p><br/>
+          <p>{{timeInfo.hour+'小时'+timeInfo.minute+'分'+timeInfo.second+'秒'}}</p>
         </div>
       </navigator>
       <div class="bolang b1"></div>
       <div class="bolang b2"></div>
       <div class="bolang b3"></div>
+      <div class="bolang b4"></div>
     </div>
   </div>
 </template>
@@ -21,9 +23,10 @@
     background-color: #fcfcfc;
   }
   .create-real-button {
-    width: 250rpx;
-    height: 250rpx;
-    border-radius: 300rpx;
+    font-size: 16px;
+    width: 450rpx;
+    height: 450rpx;
+    border-radius: 450rpx;
     position: absolute;
     margin: auto;
     top: 0;
@@ -32,7 +35,7 @@
     right: 0;
     background-color: #519dda;
     text-align: center;
-    line-height: 250rpx;
+    line-height: 450rpx;
     z-index: 999;
     color: #FFFFFF;
   }
@@ -51,6 +54,11 @@
     height: 425rpx;
     border-radius: 500rpx;
   }
+  .b4 {
+    width: 500rpx;
+    height: 500rpx;
+    border-radius: 500rpx;
+  }
   .bolang {
     position: absolute;
     margin: auto;
@@ -61,7 +69,7 @@
     background-color: #6da3fd;
     text-align: center;
     line-height: 300rpx;
-    animation: bolang 1900ms infinite;
+    animation: bolang 1600ms infinite;
   }
   @keyframes bolang {
     0% {
@@ -108,9 +116,10 @@
 </config>
 <script>
     import wepy from 'wepy'
+    const month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     export default class index extends wepy.page {
       data = {
-        birthday: '1994-08-16 09:18:56',
+        birthday: '1994-10-13 00:18:56',
         lastTime: 0,
         timeInfo: {
           year: 0,
@@ -123,19 +132,105 @@
       }
       onLoad() {
         let formatDate = this.birthday.replace('/-/g', '/')
-        let timestamp = new Date(formatDate).getTime()
-        let lastTime = parseInt(((new Date().getTime()) - timestamp) / 1000)
+        let birthdayDate = new Date(formatDate)
+        let timestamp = birthdayDate.getTime()
+        let nowDate = new Date()
+        let lastTime = parseInt(((nowDate.getTime()) - timestamp) / 1000)
         this.lastTime = lastTime
+        let timeInfo = this.calTimeInfo(birthdayDate, nowDate)
+        this.timeInfo = timeInfo
+        let self = this
+        let nowMonth = nowDate.getMonth()
+        let nowYear = nowDate.getFullYear()
+        setInterval(function (nowMonth, nowYear) {
+          let step = 1
+          timeInfo = self.timeInfo
+          if (step > 60) {
+            return false
+          }
+          timeInfo.second += step
+          if (timeInfo.second >= 60) {
+            timeInfo.minute ++
+            timeInfo.second -= 60
+          }
+          if (timeInfo.minute > 60) {
+            timeInfo.hour ++
+            timeInfo.minute -= 60
+          }
+          if (timeInfo.hour > 24) {
+            timeInfo.day ++
+            timeInfo.hour -= 24
+          }
+          let monthDay = month[nowMonth]
+          if (nowYear / 4 === 0 && nowMonth === 1) {
+            monthDay = 29
+          }
+          if (timeInfo.day > monthDay) {
+            timeInfo.month ++
+            timeInfo.day -= monthDay
+          }
+          if (timeInfo.month > 12) {
+            timeInfo.year ++
+            timeInfo.month -= 12
+          }
+          self.$apply()
+        }, 1000)
+        this.$apply()
       }
-      
-      calTimeInfo(lastTime) {
-        let second = lastTime % 60
-        lastTime -= second
-        let totalMin = lastTime / 60
-        let minute = totalMin % 60
-        totalMin -= minute
+      /** */
+      calTimeInfo(timeOrigin, timeNow) {
+        let nowYear = timeNow.getFullYear()
+        let originYear = timeOrigin.getFullYear()
+        let nowMonth = timeNow.getMonth()
+        let originMonth = timeOrigin.getMonth()
+        let nowDay = timeNow.getDay()
+        let originDay = timeOrigin.getDay()
+        let nowHour = timeNow.getHours()
+        let originHour = timeOrigin.getHours()
+        let nowMinute = timeNow.getMinutes()
+        let originMinute = timeOrigin.getMinutes()
+        let nowSecond = timeNow.getSeconds()
+        let originSecond = timeOrigin.getSeconds()
+        console.log(nowMonth)
+        let diffYear = nowYear - originYear
+        let diffMonth = nowMonth - originMonth
+        let diffDay = nowDay - originDay
+        let diffHour = nowHour - originHour
+        let diffMinute = nowMinute - originMinute
+        let diffSecond = nowSecond - originSecond
         
-        
+        if (diffMonth <= 0) {
+          diffMonth += 12
+          diffYear --
+        }
+        if (diffDay <= 0) {
+          diffMonth --
+          let monthDay = month[nowMonth]
+          if (nowYear / 4 === 0 && nowMonth === 1) {
+            monthDay = 29
+          }
+          diffDay += monthDay
+        }
+        if (diffHour <= 0) {
+          diffDay --
+          diffHour += 24
+        }
+        if (diffMinute <= 0) {
+          diffHour --
+          diffMinute += 60
+        }
+        if (diffSecond <= 0) {
+          diffMinute --
+          diffSecond += 60
+        }
+        return {
+          year: diffYear,
+          month: diffMonth,
+          day: diffDay,
+          hour: diffHour,
+          minute: diffMinute,
+          second: diffSecond
+        }
       }
     }
 </script>

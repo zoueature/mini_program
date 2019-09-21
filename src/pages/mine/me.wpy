@@ -84,9 +84,7 @@
         success: function (res) {
           let userInfo = res.rawData
           self.userInfo = JSON.parse(userInfo)
-          console.log(self.userInfo)
           self.$apply()
-          console.log(self.canIUse)
         }
       })
     }
