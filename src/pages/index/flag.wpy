@@ -5,6 +5,7 @@
         <span>{{category.name}}</span>
       </div>
     </div>
+    <div style="margin-top: 142rpx"></div>
     <div wx:for="{{flagList}}" wx:for-index="index" wx:for-item="flag" class="flag-item">
       <div class="flag-icon">
     
@@ -42,7 +43,8 @@
     padding-bottom: 20rpx;
     margin: 0 auto;
     background-color: #00c7cc;
-    position: relative;
+    position: fixed;
+    z-index: 888;
   }
   .flag-cate-item {
     width: 18%;
@@ -124,7 +126,9 @@
     
     export default class flag extends wepy.page {
       config = {
-        navigationBarBackgroundColor: '#00c7cc'
+        navigationBarBackgroundColor: '#00c7cc',
+        navigationBarTextStyle: 'white',
+        navigationBarTitleText: 'Flag'
       }
       data = {
         cateList: [

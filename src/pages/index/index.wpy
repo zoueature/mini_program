@@ -1,16 +1,18 @@
 <template>
   <div class="container">
     <div class="create-button">
+      <div class="show-year">
+        <p>{{timeInfo.year+'年'+timeInfo.month+'月'+timeInfo.day+'天'}}</p><br/>
+      </div>
       <navigator url="/pages/index/create">
         <div class="create-real-button">
-          <p>{{timeInfo.year+'年'+timeInfo.month+'月'+timeInfo.day+'日'}}</p><br/>
           <p>{{timeInfo.hour+'小时'+timeInfo.minute+'分'+timeInfo.second+'秒'}}</p>
         </div>
       </navigator>
-      <div class="bolang b1"></div>
-      <div class="bolang b2"></div>
-      <div class="bolang b3"></div>
-      <div class="bolang b4"></div>
+      <div class="bolang b1 bolang1"></div>
+      <div class="bolang b2 bolang2"></div>
+      <div class="bolang b3 bolang3"></div>
+      <div class="bolang b4 bolang4"></div>
     </div>
   </div>
 </template>
@@ -24,8 +26,8 @@
   }
   .create-real-button {
     font-size: 16px;
-    width: 450rpx;
-    height: 450rpx;
+    width: 275rpx;
+    height: 275rpx;
     border-radius: 450rpx;
     position: absolute;
     margin: auto;
@@ -35,9 +37,16 @@
     right: 0;
     background-color: #519dda;
     text-align: center;
-    line-height: 450rpx;
+    line-height: 275rpx;
     z-index: 999;
     color: #FFFFFF;
+  }
+  .show-year {
+    text-align: center;
+    background-color: #00c7cc;
+    padding: 10rpx;
+    color: #FFFFFF;
+    font-size: 18px;
   }
   .b1 {
     width: 300rpx;
@@ -55,8 +64,8 @@
     border-radius: 500rpx;
   }
   .b4 {
-    width: 500rpx;
-    height: 500rpx;
+    width: 450rpx;
+    height: 450rpx;
     border-radius: 500rpx;
   }
   .bolang {
@@ -71,6 +80,19 @@
     line-height: 300rpx;
     animation: bolang 1600ms infinite;
   }
+  .bolang1 {
+    animation: bolang 3000ms infinite;
+  }
+  .bolang2 {
+    animation: bolang 2500ms infinite;
+  }
+  .bolang3 {
+    animation: bolang 2000ms infinite;
+  }
+  .bolang4 {
+    animation: bolang 1500ms infinite;
+  }
+  
   @keyframes bolang {
     0% {
       transform: scale(0.5);
@@ -118,6 +140,11 @@
     import wepy from 'wepy'
     const month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     export default class index extends wepy.page {
+      config = {
+        navigationBarBackgroundColor: '#00c7cc',
+        navigationBarTextStyle: 'white',
+        navigationBarTitleText: '里程碑计时器'
+      }
       data = {
         birthday: '1994-10-13 00:18:56',
         lastTime: 0,

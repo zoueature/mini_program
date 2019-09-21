@@ -18,9 +18,9 @@ import 'wepy-async-function'
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/index/index',
       'pages/index/flag',
       'pages/mine/me',
-      'pages/index/index',
       'pages/index/create'
     ],
     window: {
