@@ -28,8 +28,12 @@
       </button>
     </div>
     <div class="setting-list">
-      <div wx:for="{{[[],[],[],[],[]]}}" class="setting-item">
-        <i class="fa fa-bar-chart setting-icon"></i><span>图表</span>
+      <div wx:for="{{settingList}}" >
+        <navigator url="{{item.navigator}}">
+          <div class="setting-item">
+            <i class="fa fa-{{item.icon}} setting-icon"></i><span>{{item.name}}</span>
+          </div>
+        </navigator>
       </div>
     </div>
   </div>
@@ -119,14 +123,20 @@
 
 <script>
   import wepy from 'wepy'
-  import { Timeline, TimelineItem, TimelineTitle } from 'vue-cute-timeline'
   
   
   export default class me extends wepy.page {
     data = {
       userInfo: {
       },
-      showAuthButton: false
+      showAuthButton: false,
+      settingList: [
+        {
+          icon: 'bar-chart',
+          name: '图表',
+          navigator: '/pages/mine/chart'
+        }
+      ]
     }
     components = {
       // timeline: Timeline,

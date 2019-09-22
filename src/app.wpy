@@ -26,6 +26,7 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/mine/me',
+      'pages/mine/chart',
       'pages/index/flag',
       'pages/index/create',
       'pages/index/index'
