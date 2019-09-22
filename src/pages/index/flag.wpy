@@ -1,14 +1,22 @@
 <template>
   <div class="container">
+    <div class="status-tab">
+      <div class="status-doing active">
+        <span>进行中</span>
+      </div>
+      <div class="status-done">
+        <span>已完成</span>
+      </div>
+    </div>
     <div class="flag-cate">
       <div wx:for="{{cateList}}" wx:for-index="index" wx:for-item="category" class="flag-cate-item">
         <span>{{category.name}}</span>
       </div>
     </div>
-    <div style="margin-top: 142rpx"></div>
+    <div style="margin-top: 235rpx"></div>
     <div wx:for="{{flagList}}" wx:for-index="index" wx:for-item="flag" class="flag-item">
       <div class="flag-icon">
-    
+        <image src="{{flag.icon}}"></image>
       </div>
       <div class="flag-name">
         <span>{{flag.name}}</span>
@@ -35,9 +43,31 @@
     background-color: #f7f7f7;
     position: absolute;
   }
+  .status-tab{
+    width: 100%;
+    height: 80rpx;
+    background: #00c7cc;
+    border: none;
+    position: fixed;
+    z-index: 999;
+  }
+  .status-tab div {
+    float: left;
+    width: 50%;
+    height: 100%;
+    line-height: 80rpx;
+    text-align: center;
+    font-size: 15px;
+  }
+  .active {
+    background: #FFFFFF;
+    color: #00c7cc;
+  }
   .flag-cate {
+    border: none;
     width: 100%;
     height: 86rpx;
+    top: 80rpx;
     padding-top: 20rpx;
     padding-bottom: 20rpx;
     margin: 0 auto;
@@ -52,7 +82,7 @@
     position: relative;
     line-height: 70rpx;
     text-align: center;
-    margin-top: 7rpx;
+    margin-top: 17rpx;
     float: left;
     margin-left: 1.25%;
     font-size: 13px;
@@ -81,6 +111,10 @@
     margin-top: 50rpx;
     border-radius: 90rpx;
     overflow: hidden;
+  }
+  .flag-icon image {
+    width: 100%;
+    height: 100%;
   }
   .flag-name {
     margin-left: 4%;
@@ -157,7 +191,7 @@
         flagList: [
           {
             id: 1,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天跑步5公里',
             status: 0,
             period: 30,
@@ -166,7 +200,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/f603918fa0ec08fa3139e00153ee3d6d55fbda5f.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -175,7 +209,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -184,7 +218,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -193,7 +227,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -202,7 +236,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -211,7 +245,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -220,7 +254,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -229,7 +263,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -238,7 +272,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,
@@ -247,7 +281,7 @@
           },
           {
             id: 2,
-            icon: '',
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '每天1小时阅读',
             status: 0,
             period: 30,

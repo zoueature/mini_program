@@ -35,7 +35,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #519dda;
+    background-color: #00c7cc;
     text-align: center;
     line-height: 275rpx;
     z-index: 999;
@@ -75,7 +75,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #6da3fd;
+    background-color: #00c7cc;
     text-align: center;
     line-height: 300rpx;
     animation: bolang 1600ms infinite;

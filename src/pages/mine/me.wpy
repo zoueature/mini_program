@@ -10,19 +10,27 @@
         </div>
       </div>
       <div class="mine-info-milestone">
-        <div class="milestone-done">
-        
-        </div>
         <div class="milestone-doing">
-        
+          <i class="fa fa-hourglass-2 stat-icon"></i><span>99+</span>
+        </div>
+        <div class="milestone-done">
+          <i class="fa fa-check stat-icon"></i><span>99+</span>
+        </div>
+        <div class="user-rank">
+          <span>等级</span><i wx:for="{{[[],[],[],[],[]]}}" class="fa fa-ravelry rank-icon"></i>
         </div>
       </div>
     </div>
-    <div wx:if="{{canIUse}}">
+    <div wx:if="{{showAuthButton}}">
       <button open-type="getUserInfo"
               bindgetuserinfo="bindGetUserInfo">
         授权登录
       </button>
+    </div>
+    <div class="setting-list">
+      <div wx:for="{{[[],[],[],[],[]]}}" class="setting-item">
+        <i class="fa fa-bar-chart setting-icon"></i><span>图表</span>
+      </div>
     </div>
   </div>
 </template>
@@ -31,14 +39,17 @@
   .mine-info {
     width: 100%;
     height: 200rpx;
+    border-bottom: 1rpx solid #ededed;
   }
   .mine-info div {
     float: left;
+  }
+  .mine-info-milestone div {
+    float: left;
+  }
+  .mime-info-meta, .mine-info-milestone {
     width: 50%;
     height: 100%;
-  }
-  .mine-info-milestone {
-    background-color: yellow;
   }
   .mime-info-meta .info-avatar {
     width: 150rpx;
@@ -47,18 +58,62 @@
     border-radius: 200rpx;
     margin-left: 25rpx;
     margin-top: 25rpx;
-    border: 1px solid #dddddd;
+    border: 1px solid #ededed;
   }
   .info-avatar image {
     width: 100%;
     height: 100%;
   }
   .info-name {
+    width: 50%;
+    height: 100%;
     font-size: 16px;
     color: #333333;
     text-align: center;
     line-height: 200rpx;
     overflow: hidden;
+  }
+  .milestone-done,.milestone-doing {
+    text-align: center;
+    width: 49%;
+    line-height: 130rpx;
+    color: #00c7cc;
+    height: 50%;
+    border-bottom: 1rpx solid #ededed;
+  }
+  .milestone-doing {
+    border-right: 1rpx solid #ededed;
+  }
+  .user-rank {
+    width: 100%;
+    text-align: center;
+    color: #00c7cc;
+    height: 50%;
+    line-height: 90rpx;
+  }
+  .stat-icon {
+    margin-right: 15rpx;
+  }
+  .rank-icon {
+    margin-left: 14rpx;
+  }
+  .setting-list {
+    width: 96%;
+    height: 500rpx;
+    margin: 25rpx auto;
+  }
+  .setting-item {
+    width: 85%;
+    height: 100rpx;
+    padding-left: 5%;
+    border-bottom: 1rpx solid #efefef;
+    line-height: 145rpx;
+    color: #777777;
+  }
+  .setting-icon {
+    margin-right: 25rpx;
+    font-size: 20px;
+    color: #333333;
   }
 </style>
 
@@ -71,7 +126,7 @@
     data = {
       userInfo: {
       },
-      canIUse: wx.canIUse('button.open-type.getUserInfo') && this.userInfo === {}
+      showAuthButton: false
     }
     components = {
       // timeline: Timeline,
@@ -84,6 +139,11 @@
         success: function (res) {
           let userInfo = res.rawData
           self.userInfo = JSON.parse(userInfo)
+          console.log(self.userInfo)
+          self.$apply()
+        },
+        fail (error) {
+          self.showAuthButton = true
           self.$apply()
         }
       })
@@ -92,6 +152,7 @@
       bindGetUserInfo (e) {
         this.$parent.globalData.userInfo = e.detail.userInfo
         this.userInfo = e.detail.userInfo
+        this.showAuthButton = false
       }
     }
   }

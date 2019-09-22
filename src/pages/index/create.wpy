@@ -5,7 +5,7 @@
       <div class="flag-cate-line" wx:for="{{cateList}}" wx:for-index="index" wx:for-item="cateArr">
         <div wx:for="{{cateArr}}" wx:for-index="index" wx:for-item="cate" @tap="goSecond({{cate.id}})">
 <!--          <navigator url="/pages/index/create?id={{cate.id}}&step=2">-->
-            <div class="flag-cate-column" >
+            <div class="flag-cate-column" style="background-image: url({{cate.icon}}); background-size: 100% 100%;background-repeat: no-repeat">
               <span>{{cate.name}}</span>
             </div>
 <!--          </navigator>-->
@@ -16,13 +16,13 @@
       <div wx:for="{{childCateList}}" class="flag-child-cate-item" @tap="goThird({{item.id}})">
 <!--        <navigator url="/pages/index/create?id={{item.id}}&step=3">-->
           <div class="flag-child-cate-item-icon">
-          
+            <image src="{{item.icon}}"></image>
           </div>
           <div class="flag-child-cate-item-name">
             <span>{{item.name}}</span>
           </div>
           <div class="flag-child-cate-item-go">
-            <span>></span>
+            <i class="fa fa-angle-right"></i>
           </div>
 <!--        </navigator>-->
       </div>
@@ -90,13 +90,14 @@
     float: left;
     margin-left: 23rpx;
     font-size: 14px;
-    color: #00c7cc;
+    color: #FFFFFF;
     text-align: center;
     line-height: 124rpx;
+    font-weight: bolder;
   }
   .flag-child-cate-item {
     width: 98%;
-    height: 100rpx;
+    height: 120rpx;
     margin: 15rpx auto 0 auto;
     background-color: #FFFFFF;
     overflow: hidden;
@@ -109,15 +110,21 @@
   .flag-child-cate-item-icon {
     width: 90rpx;
     height: 90rpx;
-    top: 5rpx;
-    left: 5rpx;
+    top: 15rpx;
+    left: 10rpx;
     background-color: #00c7cc;
     border-radius: 90rpx;
+    overflow: hidden;
+  }
+  .flag-child-cate-item-icon image {
+    width: 100%;
+    height: 100%;
   }
   .flag-child-cate-item-name {
     left: 120rpx;
     width: 450rpx;
     height: 100rpx;
+    top: 12rpx;
     text-align: left;
     line-height: 100rpx;
     font-size: 18px;
@@ -132,7 +139,7 @@
     text-align: center;
     line-height: 30rpx;
     color: #cdcdcd;
-    font-size: 18px;
+    font-size: 22px;
   }
   .picker-section {
     width: 97%;
@@ -154,7 +161,7 @@
     left: 10rpx;
   }
   .picker {
-    width: 400rpx;
+    width: 700rpx;
     height: 126rpx;
     position: absolute;
     left: 125rpx;
@@ -201,44 +208,54 @@
         [
           {
             id: 1,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '生活'
           },
           {
             id: 2,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '学习成长'
           },
           {
             id: 3,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '运动健身'
           },
           {
             id: 4,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '早睡早起'
           },
           {
             id: 5,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '早睡早起'
           }
         ],
         [
           {
             id: 1,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '生活'
           },
           {
             id: 2,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '学习成长'
           },
           {
             id: 3,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '运动健身'
           },
           {
             id: 4,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '早睡早起'
           },
           {
             id: 5,
+            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
             name: '早睡早起'
           }
         ]
@@ -249,15 +266,18 @@
       childCateList : [
         {
           id: 456,
-          name: '跑步'
+          name: '跑步',
+          icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg'
         },
         {
           id: 543,
-          name: '哑铃'
+          name: '哑铃',
+          icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg'
         },
         {
           id: 789,
-          name: '深蹲'
+          name: '深蹲',
+          icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg'
         }
       ],
       periodSelect: [0,0],
