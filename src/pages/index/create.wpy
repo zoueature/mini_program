@@ -49,8 +49,19 @@
           <span>任务量: </span><span>{{taskSelector[0][taskSelect[0]]}}{{taskSelector[1][taskSelect[1]]}}</span>
         </picker>
       </div>
-      <div class="flag-detail">
-      
+      <div class="picker-section">
+        <div class="picker-icon">
+  
+        </div>
+        <div class="flag-task-show">
+          <span>任务</span>
+          <span wx:if="{{flagInfo.period[0] === 0 }}">
+            每{{periodSelector[1][flagInfo.period[1]]}}{{periodSelector[0][flagInfo.period[0]]}}{{flagInfo.childCateInfo.name}}{{taskSelector[0][flagInfo.task[0]]}}{{taskSelector[1][flagInfo.task[1]]}}
+          </span>
+          <span wx:else>
+            每{{periodSelector[0][flagInfo.period[0]]}}{{periodSelector[1][flagInfo.period[1]]}}{{flagInfo.childCateInfo.name}}{{taskSelector[0][flagInfo.task[0]]}}{{taskSelector[1][flagInfo.task[1]]}}
+          </span>
+        </div>
       </div>
       <button type="primary" class="flag-create" @tap="submitFlag">立下FLAG</button>
     </div>
@@ -93,7 +104,7 @@
   }
   .flag-child-cate-item div {
     position: absolute;
-    float: left;
+    /*float: left;*/
   }
   .flag-child-cate-item-icon {
     width: 90rpx;
@@ -148,6 +159,7 @@
     position: absolute;
     left: 125rpx;
     line-height: 126rpx;
+    color: #4F4F4F;
   }
   .flag-create {
     margin-top: 100rpx;
@@ -157,6 +169,13 @@
     font-size: 18px;
     margin-left: auto;
     margin-right: auto;
+  }
+  .flag-task-show {
+    font-size: 16px;
+    color: #777777;
+    left: 125rpx;
+    position: absolute;
+    line-height: 126rpx;
   }
 </style>
 
