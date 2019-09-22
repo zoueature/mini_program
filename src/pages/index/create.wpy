@@ -52,7 +52,7 @@
       <div class="flag-detail">
       
       </div>
-      <button type="primary" class="flag-create">立下FLAG</button>
+      <button type="primary" class="flag-create" @tap="submitFlag">立下FLAG</button>
     </div>
   </div>
 </template>
@@ -278,9 +278,30 @@
     methods = {
       goSecond(id) {
         this.step = STEP_CHILD
+        let got = false
+        for (let i = 0; i < this.cateList.length; i ++) {
+          for (let j = 0; j < this.cateList[i].length; j ++) {
+            if (id === this.cateList[i][j].id) {
+              this.flagInfo.cateInfo = this.cateList[i][j]
+              got = true
+              break
+            }
+          }
+          if (got === true) {
+            break
+          }
+        }
       },
       goThird(id) {
         this.step = STEP_FORM
+        for (let i = 0; i < this.childCateList.length; i ++) {
+          if (id === this.childCateList[i].id) {
+            this.flagInfo.childCateInfo = this.childCateList[i]
+            break
+          }
+        }
+        this.flagInfo.period = this.periodSelect
+        this.flagInfo.task = this.taskSelect
       },
       periodSelectorChange(value) {
         console.log(value)
@@ -292,12 +313,17 @@
           this.periodSelect[column + 1] = 0
         }
         this.periodSelect[column] = line
+        this.flagInfo.period = this.periodSelect
       },
       taskSelectChange(value) {
         let chandeDetail = value.detail
         let column = chandeDetail.column
         let line = chandeDetail.value
         this.taskSelect[column] = line
+        this.flagInfo.task = this.taskSelect
+      },
+      submitFlag() {
+        console.log(this.flagInfo)
       }
     }
   }

@@ -16,14 +16,13 @@
           <span>{{flag.createTime}}</span>
         </div>
       </div>
-      <div class="flag-status">
-    
+      <div class="flag-punch" @tap="setDone({{flag.id}})" ref="{{flag.id}}">
+        <i class="fa fa-flag"></i>
       </div>
-      <div class="flag-process">
-        <div class="flag-process-done">
+      <div >
+        <progress active="true" percent="37" show-info  color="#00c7cc" class="flag-process"/>
+      </div>
       
-        </div>
-      </div>
     </div>
     <div class="blank"></div>
   </div>
@@ -58,14 +57,14 @@
     margin-left: 1.25%;
     font-size: 13px;
     background-color: #FFFFFF;
-    border: 1px solid #dedede;
     color: #555555;
     border-radius: 35rpx;
+    border: none;
   }
   .flag-item {
     background-color: #fefefe;
     width: 98%;
-    height: 135rpx;
+    height: 195rpx;
     margin: 25rpx auto 0 auto;
     position: relative;
     border: 1rpx solid #cccccc;
@@ -79,7 +78,7 @@
     height: 90rpx;
     background-color: #777777;
     margin-left: 3%;
-    margin-top: 18rpx;
+    margin-top: 50rpx;
     border-radius: 90rpx;
     overflow: hidden;
   }
@@ -89,33 +88,40 @@
     height: 100rpx;
     margin-top: 7rpx;
     font-size: 16px;
-    line-height: 65rpx;
+    line-height: 100rpx;
     color: #555555;
   }
   .flag-create-time {
     width: 45%;
     height: 30rpx;
     position: absolute;
-    bottom: 30rpx;
+    bottom: 45rpx;
     overflow: hidden;
-    font-size: 12px;
+    font-size: 14px;
     color: #777777;
     line-height: 30rpx;
   }
   .flag-process {
     width: 98%;
     height: 7%;
-    background-color: #dddddd;
     border-radius: 125rpx;
     position: absolute;
     left: 1%;
-    bottom: 8rpx;
+    bottom: 12rpx;
+    color: #777777;
   }
-  .flag-process-done {
-    width: 60%;
-    height: 100%;
-    background-color: green;
-    border-radius: 125rpx;
+  .flag-punch {
+    width: 100rpx;
+    height: 100rpx;
+    margin-left: 130rpx;
+    margin-top: 35rpx;
+    text-align: right;
+    line-height: 100rpx;
+    font-size: 18px;
+    color: #00c7cc;
+  }
+  .flag-punch:hover {
+    color: red;
   }
   .blank {
     height: 70rpx;
@@ -251,7 +257,12 @@
         ]
       }
       onLoad() {
-      
+        this.$parent.globalData.flagList = this.flagList
+      }
+      methods = {
+        setDone(id, e) {
+          console.log(e, id)
+        }
       }
     }
 </script>
