@@ -14,6 +14,10 @@
       <div class="bolang b3 bolang3"></div>
       <div class="bolang b4 bolang4"></div>
     </div>
+    <div class="setting-icon" @tap="setStartTime">
+      <i class="fa fa-gear"></i>
+    </div>
+    <showModel :show.sync="showCreateModel" :msg.sync="msg"></showModel>
   </div>
 </template>
 
@@ -78,58 +82,31 @@
     background-color: #00c7cc;
     text-align: center;
     line-height: 300rpx;
-    animation: bolang 1600ms infinite;
+    animation: bolang 900ms linear infinite alternate;
   }
   .bolang1 {
-    animation: bolang 2800ms infinite;
+    animation: bolang 900ms linear infinite alternate;
   }
   .bolang2 {
-    animation: bolang 2200ms infinite;
+    animation: bolang 900ms linear infinite alternate;
   }
   .bolang3 {
-    animation: bolang 2000ms infinite;
+    animation: bolang 900ms linear infinite alternate;
   }
   .bolang4 {
-    animation: bolang 1500ms infinite;
+    animation: bolang 900ms linear infinite alternate;
   }
   
-  @keyframes bolang {
-    0% {
-      transform: scale(0.5);
-      opacity: 0.1;
-    }
-    12% {
-      transform: scale(0.6);
-      opacity: 0.15;
-    }
-    25% {
-      transform: scale(0.7);
-      opacity: 0.2;
-    }
-    37% {
-      transform: scale(0.8);
-      opacity: 0.25;
-    }
-    50% {
-      transform: scale(0.9);
-      opacity: 0.3;
-    }
-    63% {
-      transform: scale(0.8);
-      opacity: 0.35;
-    }
-    75% {
-      transform: scale(0.7);
-      opacity: 0.4;
-    }
-    87% {
-      transform: scale(0.6);
-      opacity: 0.3;
-    }
-    100% {
-      transform: scale(0.5);
-      opacity: 0.2;
-    }
+  .setting-icon {
+    position: absolute;
+    left: 83%;
+    top: 95rpx;
+    width: 100rpx;
+    height: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+    font-size: 35px;
+    color: #999999;
   }
 </style>
 
@@ -138,12 +115,16 @@
 </config>
 <script>
     import wepy from 'wepy'
+    import showModel from '../../components/show-model'
     const month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     export default class index extends wepy.page {
       config = {
         navigationBarBackgroundColor: '#00c7cc',
         navigationBarTextStyle: 'white',
         navigationBarTitleText: '里程碑计时器'
+      }
+      components = {
+        showModel: showModel
       }
       data = {
         birthday: '1994-10-13 00:18:56',
@@ -155,7 +136,8 @@
           hour: 0,
           minute: 0,
           second: 0
-        }
+        },
+        showCreateModel: false
       }
       onLoad() {
         let formatDate = this.birthday.replace('/-/g', '/')
@@ -166,43 +148,8 @@
         this.lastTime = lastTime
         let timeInfo = this.calTimeInfo(birthdayDate, nowDate)
         this.timeInfo = timeInfo
-        let self = this
-        let nowMonth = nowDate.getMonth()
-        let nowYear = nowDate.getFullYear()
-        setInterval(function (nowMonth, nowYear) {
-          let step = 1
-          timeInfo = self.timeInfo
-          if (step > 60) {
-            return false
-          }
-          timeInfo.second += step
-          if (timeInfo.second >= 60) {
-            timeInfo.minute ++
-            timeInfo.second -= 60
-          }
-          if (timeInfo.minute > 60) {
-            timeInfo.hour ++
-            timeInfo.minute -= 60
-          }
-          if (timeInfo.hour > 24) {
-            timeInfo.day ++
-            timeInfo.hour -= 24
-          }
-          let monthDay = month[nowMonth]
-          if (nowYear / 4 === 0 && nowMonth === 1) {
-            monthDay = 29
-          }
-          if (timeInfo.day > monthDay) {
-            timeInfo.month ++
-            timeInfo.day -= monthDay
-          }
-          if (timeInfo.month > 12) {
-            timeInfo.year ++
-            timeInfo.month -= 12
-          }
-          self.$apply()
-        }, 1000)
         this.$apply()
+        //this.asyncTime(this)
       }
       /** */
       calTimeInfo(timeOrigin, timeNow) {
@@ -257,6 +204,51 @@
           hour: diffHour,
           minute: diffMinute,
           second: diffSecond
+        }
+      }
+      asyncTime(self) {
+        setInterval(function (self) {
+          let nowDate = new Date()
+          let nowMonth = nowDate.getMonth()
+          let nowYear = nowDate.getFullYear()
+          let step = 1
+          let timeInfo = self.timeInfo
+          if (step > 60) {
+            return false
+          }
+          timeInfo.second += step
+          if (timeInfo.second >= 60) {
+            timeInfo.minute ++
+            timeInfo.second -= 60
+          }
+          if (timeInfo.minute > 60) {
+            timeInfo.hour ++
+            timeInfo.minute -= 60
+          }
+          if (timeInfo.hour > 24) {
+            timeInfo.day ++
+            timeInfo.hour -= 24
+          }
+          let monthDay = month[nowMonth]
+          if (nowYear / 4 === 0 && nowMonth === 1) {
+            monthDay = 29
+          }
+          if (timeInfo.day > monthDay) {
+            timeInfo.month ++
+            timeInfo.day -= monthDay
+          }
+          if (timeInfo.month > 12) {
+            timeInfo.year ++
+            timeInfo.month -= 12
+          }
+          self.timeInfo = timeInfo
+          self.$apply()
+        }, 1000, self)
+      }
+      methods = {
+        setStartTime() {
+          this.showCreateModel = !this.showCreateModel
+          console.log(this.showCreateModel)
         }
       }
     }

@@ -15,6 +15,46 @@
   font-style: normal;
 }
   @import "lib/font-awesome/less/font-awesome";
+  @keyframes bolang {
+    from {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    to {
+      transform: scale(0.9);
+      opacity: 0.3;
+    }
+  }
+  @keyframes zoom {
+    from {
+      width: 0;
+      height: 0;
+      transform: rotate(0deg);
+    }
+    to {
+      width: 500rpx;
+      height: 500rpx;
+      transform: rotate(360deg);
+    }
+    /*0% {*/
+    /*}*/
+    /*25% {*/
+    /*  width: 100rpx;*/
+    /*  height: 100rpx;*/
+    /*}*/
+    /*50% {*/
+    /*  width: 200rpx;*/
+    /*  height: 200rpx;*/
+    /*}*/
+    /*75% {*/
+    /*  width: 300rpx;*/
+    /*  height: 300rpx;*/
+    /*}*/
+    /*100% {*/
+    /*  width: 400rpx;*/
+    /*  height: 400rpx;*/
+    /*}*/
+  }
 </style>
 
 <script>
@@ -25,11 +65,12 @@ import 'wepy-async-function'
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/mine/me',
+      'pages/index/index',
       'pages/mine/chart',
+      'pages/mine/me',
       'pages/index/flag',
       'pages/index/create',
-      'pages/index/index'
+      
     ],
     window: {
       backgroundTextStyle: 'light',

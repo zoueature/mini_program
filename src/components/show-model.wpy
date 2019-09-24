@@ -1,0 +1,48 @@
+<template>
+  <div class="create-form-model" wx:if="{{show}}">
+    <div class="close-model" @tap="closeModel">
+      <i class="fa fa-times"></i>
+      {{msg}}
+    </div>
+  </div>
+</template>
+<style lang="less">
+  .create-form-model {
+    width: 500rpx;
+    height: 500rpx;
+    background-color: #00c7cc;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    animation: zoom 1000ms;
+    overflow: hidden;
+  }
+</style>
+<script>
+  import wepy from 'wepy'
+
+  export default class showModel extends wepy.component {
+    data = {
+    }
+    props = {
+      show: Boolean,
+      msg: String
+    }
+
+    events = {
+    
+    }
+
+    methods = {
+      closeModel() {
+        this.show = false
+      }
+    }
+
+    onLoad () {
+    }
+  }
+</script>
