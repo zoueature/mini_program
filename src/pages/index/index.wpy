@@ -98,7 +98,7 @@
   }
   
   .setting-icon {
-    position: absolute;
+    position: fixed;
     left: 83%;
     top: 95rpx;
     width: 100rpx;
@@ -116,6 +116,9 @@
 <script>
     import wepy from 'wepy'
     import showModel from '../../components/show-model'
+    import log from '../../lib/log'
+
+
     const month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     export default class index extends wepy.page {
       config = {
@@ -139,7 +142,7 @@
         },
         showCreateModel: false
       }
-      onLoad() {
+      onReady() {
         let formatDate = this.birthday.replace('/-/g', '/')
         let birthdayDate = new Date(formatDate)
         let timestamp = birthdayDate.getTime()
@@ -149,7 +152,8 @@
         let timeInfo = this.calTimeInfo(birthdayDate, nowDate)
         this.timeInfo = timeInfo
         this.$apply()
-        //this.asyncTime(this)
+        log.debug('1231231231')
+        log.info('sfwfgwrgfegret')
       }
       /** */
       calTimeInfo(timeOrigin, timeNow) {
@@ -248,7 +252,9 @@
       methods = {
         setStartTime() {
           this.showCreateModel = !this.showCreateModel
-          console.log(this.showCreateModel)
+          console.log(log)
+          console.log(wx.getRealtimeLogManager())
+          log.error("set setting time debug debug debug")
         }
       }
     }

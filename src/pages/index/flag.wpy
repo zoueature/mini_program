@@ -14,7 +14,7 @@
       </div>
     </div>
     <div style="margin-top: 235rpx"></div>
-    <div wx:for="{{flagList}}" wx:for-index="index" wx:for-item="flag" class="flag-item">
+    <div wx:for="{{flagList}}" wx:for-index="index" wx:for-item="flag" class="flag-item" :class="{'slide': flag.slide}">
       <div class="flag-icon">
         <image src="{{flag.icon}}"></image>
       </div>
@@ -100,6 +100,18 @@
     border: 1rpx solid #cccccc;
     border-radius: 10rpx;
   }
+  @keyframes slide {
+    from {
+      margin-left: 25rpx;
+    }
+    to {
+      margin-left: -1000rpx;
+      display: none;
+    }
+  }
+  .slide {
+    animation: slide 1000ms;
+  }
   .flag-item div {
     float: left;
   }
@@ -171,6 +183,7 @@
         navigationBarTitleText: 'Flag'
       }
       data = {
+        deleteQueue:[],
         cateList: [
           {
             name: '生活'
@@ -292,10 +305,31 @@
       }
       onLoad() {
         this.$parent.globalData.flagList = this.flagList
+        setInterval(function (self) {
+          let deleteIndex = self.deleteQueue.pop()
+          if (deleteIndex !== undefined) {
+            let now = (new Date()).getTime()
+            while (true) {
+              let newNow = (new Date()).getTime()
+              if (newNow - now > 850) {
+                break;
+              }
+            }
+            self.flagList.splice(deleteIndex, 1)
+            self.$apply()
+          }
+        }, 100, this)
       }
       methods = {
         setDone(id, e) {
-          console.log(e, id)
+          for (let i = 0; i < this.flagList.length; i++) {
+            if (this.flagList[i].id === id) {
+              this.flagList[i].slide = true
+              this.deleteQueue.push(i)
+              this.$apply()
+              break
+            }
+          }
         }
       }
     }

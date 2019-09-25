@@ -1,17 +1,41 @@
 <template>
-  <div class="create-form-model" wx:if="{{show}}">
+  <div class="create-form-model" wx:if="{{showModelSwitch ^ show}}">
     <div class="close-model" @tap="closeModel">
       <i class="fa fa-times"></i>
-      {{msg}}
+    </div>
+    <div class="setting-item">
+      <image src="http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg"></image>
+    </div>
+    <div class="setting-item">
+  
+    </div>
+    <div class="setting-item">
+  
+    </div>
+    <div class="setting-item">
+  
+    </div>
+    <div class="setting-item">
+  
+    </div>
+    <div class="setting-item">
+  
+    </div>
+    <div class="setting-item">
+  
+    </div>
+    <div class="setting-item">
+  
+    </div>
+    <div class="setting-item">
+  
     </div>
   </div>
 </template>
 <style lang="less">
   .create-form-model {
-    width: 500rpx;
-    height: 500rpx;
-    background-color: #00c7cc;
-    position: absolute;
+    width: 495rpx;
+    height: 550rpx;
     margin: auto;
     left: 0;
     right: 0;
@@ -19,6 +43,32 @@
     bottom: 0;
     animation: zoom 1000ms;
     overflow: hidden;
+    border: 1rpx solid #dedede;
+    background-color: #FFFFFF;
+    border-radius: 25rpx;
+    box-shadow: 3rpx 3rpx 7rpx #dedede;
+    position: fixed;
+  }
+  .close-model {
+    width: 50rpx;
+    height: 50rpx;
+    margin-left: 450rpx;
+    margin-top: 5rpx;
+    color: #AAAAAA;
+    font-size: 20px;
+  }
+  .setting-item {
+    float: left;
+    width: 125rpx;
+    height: 125rpx;
+    margin: 20rpx 20rpx;
+    background-color: red;
+    border-radius: 125rpx;
+    overflow: hidden;
+  }
+  .setting-item image {
+    width: 100%;
+    height: 100%;
   }
 </style>
 <script>
@@ -26,6 +76,7 @@
 
   export default class showModel extends wepy.component {
     data = {
+      showModelSwitch: this.show
     }
     props = {
       show: Boolean,
@@ -38,7 +89,7 @@
 
     methods = {
       closeModel() {
-        this.show = false
+        this.showModelSwitch = !this.showModelSwitch
       }
     }
 
