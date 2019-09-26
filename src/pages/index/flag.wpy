@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="status-tab">
-      <div class="status-doing active">
+      <div class="status-doing {{[active === 'doing' ? 'active' : '']}}" @tap="switchTab(1)">
         <span>进行中</span>
       </div>
-      <div class="status-done">
+      <div class="status-done {{[active === 'done' ? 'active' : '']}}" @tap="switchTab(2)">
         <span>已完成</span>
       </div>
     </div>
@@ -14,7 +14,11 @@
       </div>
     </div>
     <div style="margin-top: 235rpx"></div>
-    <div wx:for="{{flagList}}" wx:for-index="index" wx:for-item="flag" class="flag-item" :class="{'slide': flag.slide}">
+    <div wx:for="{{flagList}}"
+         wx:for-index="index"
+         wx:for-item="flag"
+         class="flag-item {{ [doing ? 'fromLeft' : 'fromRight'] }}"
+         :class="{'slide': flag.slide}">
       <div class="flag-icon">
         <image src="{{flag.icon}}"></image>
       </div>
@@ -44,12 +48,15 @@
     position: absolute;
   }
   .status-tab{
-    width: 100%;
+    width: 90%;
     height: 80rpx;
     background: #00c7cc;
     border: none;
     position: fixed;
     z-index: 999;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 25rpx;
   }
   .status-tab div {
     float: left;
@@ -62,6 +69,7 @@
   .active {
     background: #FFFFFF;
     color: #00c7cc;
+    border-radius: 35rpx;
   }
   .flag-cate {
     border: none;
@@ -99,6 +107,32 @@
     position: relative;
     border: 1rpx solid #cccccc;
     border-radius: 10rpx;
+  }
+  @keyframes fromLeft {
+    from {
+      margin-left: -1000rpx;
+      transform: rotate(-45deg);
+    }
+    to {
+      margin-left: auto;
+      transform: rotate(0deg);
+    }
+  }
+  .fromLeft {
+    animation: fromLeft 1000ms;
+  }
+  @keyframes fromRight {
+    from {
+      margin-left: 1000rpx;
+      transform: rotate(45deg);
+    }
+    to {
+      margin-left: auto;
+      transform: rotate(0deg);
+    }
+  }
+  .fromRight {
+    animation: fromRight 1000ms;
   }
   @keyframes slide {
     from {
@@ -183,6 +217,8 @@
         navigationBarTitleText: 'Flag'
       }
       data = {
+        active: 'doing',
+        doing: true,
         deleteQueue:[],
         cateList: [
           {
@@ -311,7 +347,7 @@
             let now = (new Date()).getTime()
             while (true) {
               let newNow = (new Date()).getTime()
-              if (newNow - now > 850) {
+              if (newNow - now > 750) {
                 break;
               }
             }
@@ -319,6 +355,8 @@
             self.$apply()
           }
         }, 100, this)
+        console.log(this.active)
+        console.log(this.doing)
       }
       methods = {
         setDone(id, e) {
@@ -330,6 +368,25 @@
               break
             }
           }
+        },
+        switchTab(tab) {
+          let oldDoing = this.doing
+          if (tab == 1)
+          {
+            this.doing = true
+            this.active = 'doing'
+          } else
+          {
+            this.doing = false
+            this.active = 'done'
+          }
+          if (oldDoing !== this.doing) {
+            wx.pageScrollTo({
+              scrollTop: 0
+            })
+          }
+          console.log(this.active)
+          console.log(this.doing)
         }
       }
     }
