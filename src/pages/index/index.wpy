@@ -143,17 +143,19 @@
         showCreateModel: false
       }
       onReady() {
-        let formatDate = this.birthday.replace('/-/g', '/')
-        let birthdayDate = new Date(formatDate)
-        let timestamp = birthdayDate.getTime()
-        let nowDate = new Date()
-        let lastTime = parseInt(((nowDate.getTime()) - timestamp) / 1000)
-        this.lastTime = lastTime
-        let timeInfo = this.calTimeInfo(birthdayDate, nowDate)
+        let info = this.getDateInfo()
+        let timeInfo = this.calTimeInfo(info.origin, info.now)
         this.timeInfo = timeInfo
-        this.$apply()
-        log.debug('1231231231')
-        log.info('sfwfgwrgfegret')
+        this.asyncTime(this)
+      }
+      getDateInfo () {
+        let formatDate = this.birthday.replace(/-/g, '/')
+        let birthdayDate = new Date(formatDate)
+        let nowDate = new Date()
+        return {
+          now: nowDate,
+          origin: birthdayDate
+        }
       }
       /** */
       calTimeInfo(timeOrigin, timeNow) {
@@ -169,7 +171,6 @@
         let originMinute = timeOrigin.getMinutes()
         let nowSecond = timeNow.getSeconds()
         let originSecond = timeOrigin.getSeconds()
-        console.log(nowMonth)
         let diffYear = nowYear - originYear
         let diffMonth = nowMonth - originMonth
         let diffDay = nowDay - originDay
@@ -216,6 +217,10 @@
           let nowMonth = nowDate.getMonth()
           let nowYear = nowDate.getFullYear()
           let step = 1
+          let info = self.getDateInfo()
+          if (self.timeInfo == null) {
+            self.timeInfo = self.calTimeInfo(info.origin, info.now)
+          }
           let timeInfo = self.timeInfo
           if (step > 60) {
             return false
@@ -252,9 +257,6 @@
       methods = {
         setStartTime() {
           this.showCreateModel = !this.showCreateModel
-          console.log(log)
-          console.log(wx.getRealtimeLogManager())
-          log.error("set setting time debug debug debug")
         }
       }
     }

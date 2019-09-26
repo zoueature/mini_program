@@ -47,8 +47,8 @@ import 'wepy-async-function'
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index/flag',
       'pages/index/index',
+      'pages/index/flag',
       'pages/mine/chart',
       'pages/mine/me',
       'pages/index/create',
