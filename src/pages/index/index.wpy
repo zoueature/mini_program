@@ -15,7 +15,7 @@
       <div class="bolang b4 bolang4"></div>
     </div>
     <div class="setting-icon" @tap="setStartTime">
-      <i class="fa fa-gear"></i>
+      <i class="fa fa-clock-o"></i>
     </div>
     <showModel :show.sync="showCreateModel" :msg.sync="msg"></showModel>
   </div>
