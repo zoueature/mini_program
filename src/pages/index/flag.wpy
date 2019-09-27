@@ -112,7 +112,7 @@
   @keyframes fromLeft {
     from {
       margin-left: -1000rpx;
-      transform: rotate(-45deg);
+      transform: rotate(-90deg);
     }
     to {
       margin-left: auto;
@@ -125,7 +125,7 @@
   @keyframes fromRight {
     from {
       margin-left: 1000rpx;
-      transform: rotate(45deg);
+      transform: rotate(90deg);
     }
     to {
       margin-left: auto;

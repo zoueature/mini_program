@@ -230,11 +230,11 @@
             timeInfo.minute ++
             timeInfo.second -= 60
           }
-          if (timeInfo.minute > 60) {
+          if (timeInfo.minute >= 60) {
             timeInfo.hour ++
             timeInfo.minute -= 60
           }
-          if (timeInfo.hour > 24) {
+          if (timeInfo.hour >= 24) {
             timeInfo.day ++
             timeInfo.hour -= 24
           }

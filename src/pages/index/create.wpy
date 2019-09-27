@@ -362,6 +362,22 @@
         this.flagInfo.task = this.taskSelect
       },
       submitFlag() {
+        wx.showToast({
+          title: '',
+          icon: 'success',
+          success() {
+            wx.switchTab({
+              url: '/pages/index/flag',
+              success(res) {
+                console.log(res)
+              },
+              fail(error) {
+                console.log(error)
+              },
+            })
+          },
+          duration: 2000
+        })
         console.log(this.flagInfo)
       }
     }
