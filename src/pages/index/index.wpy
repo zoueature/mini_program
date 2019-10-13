@@ -116,7 +116,6 @@
 <script>
     import wepy from 'wepy'
     import showModel from '../../components/show-model'
-    import log from '../../lib/log'
 
 
     const month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -147,6 +146,16 @@
         let timeInfo = this.calTimeInfo(info.origin, info.now)
         this.timeInfo = timeInfo
         this.asyncTime(this)
+        wx.authorize({
+          scope: "scope.werun",
+          success() {
+            wx.getWeRunData({
+              success(data) {
+                console.log(data)
+              }
+            })
+          }
+        })
       }
       getDateInfo () {
         let formatDate = this.birthday.replace(/-/g, '/')

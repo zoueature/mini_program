@@ -20,12 +20,12 @@
          class="flag-item {{ [doing ? 'fromLeft' : 'fromRight'] }}"
          :class="{'slide': flag.slide}">
       <div class="flag-icon">
-        <image src="{{flag.icon}}"></image>
+        <image src="{{flag.img}}"></image>
       </div>
       <div class="flag-name">
-        <span>{{flag.name}}</span>
+        <span>每{{flag.periodName + flag.taskName + flag.taskSizeName}}</span>
         <div class="flag-create-time">
-          <span>{{flag.createTime}}</span>
+          <span>{{flag.lastCheckIn}}</span>
         </div>
       </div>
       <div class="flag-punch" @tap="setDone({{flag.id}})" ref="{{flag.id}}">
@@ -210,14 +210,17 @@
 </style>
 <script>
     import wepy from 'wepy'
+    import api from '../../comm/api'
     
     export default class flag extends wepy.page {
       config = {
         navigationBarBackgroundColor: '#00c7cc',
         navigationBarTextStyle: 'white',
-        navigationBarTitleText: 'Flag'
+        navigationBarTitleText: 'Flag',
+        enablePullDownRefresh: true
       }
       data = {
+        isFirstIn: true,
         active: 'doing',
         doing: true,
         deleteQueue:[],
@@ -239,108 +242,10 @@
           }
         ],
         flagList: [
-          {
-            id: 1,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天跑步5公里',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-19 09:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/f603918fa0ec08fa3139e00153ee3d6d55fbda5f.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          },
-          {
-            id: 2,
-            icon: 'http://a.hiphotos.baidu.com/image/pic/item/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg',
-            name: '每天1小时阅读',
-            status: 0,
-            period: 30,
-            last: 10,
-            createTime: '2019-09-17 18:23:18'
-          }
         ]
       }
       onLoad() {
+        //this.getFlagList()
         this.$parent.globalData.flagList = this.flagList
         setInterval(function (self) {
           let deleteIndex = self.deleteQueue.pop()
@@ -356,8 +261,32 @@
             self.$apply()
           }
         }, 100, this)
-        console.log(this.active)
-        console.log(this.doing)
+      }
+      onShow() {
+        if (this.isFirstIn) {
+          wx.showLoading()
+          this.isFirstIn = false
+        }
+        this.getFlagList()
+      }
+      onPullDownRefresh() {
+        wx.showLoading()
+        this.getFlagList()
+      }
+      getFlagList() {
+        let self = this
+        wx.request({
+          url: api.flagList,
+          methods: 'GET',
+          success (res) {
+            if (res.statusCode === 200 && res.data.code === 0) {
+              self.flagList = res.data.data
+              self.$apply()
+              wx.hideLoading()
+              wx.stopPullDownRefresh()
+            }
+          }
+        })
       }
       methods = {
         setDone(id, e) {

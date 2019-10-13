@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-    <div wx:if="{{showAuthButton}}">
+    <div wx:if="{{true}}">
       <button open-type="getUserInfo"
               bindgetuserinfo="bindGetUserInfo">
         授权登录
@@ -123,6 +123,7 @@
 
 <script>
   import wepy from 'wepy'
+  import api from '../../comm/api'
   
   
   export default class me extends wepy.page {
@@ -160,9 +161,36 @@
     }
     methods = {
       bindGetUserInfo (e) {
+        console.log(e.detail)
         this.$parent.globalData.userInfo = e.detail.userInfo
         this.userInfo = e.detail.userInfo
         this.showAuthButton = false
+        wx.login({
+          success(res) {
+            if (res.code) {
+              //发起网络请求
+              wx.request({
+                url: api.wxLogin,
+                data: {
+                  code: res.code,
+                  appId: 'wxMiniProgram'
+                },
+                header: {
+                  'content-type': 'application/x-www-form-urlencoded'
+                },
+                method: 'POST',
+                success (res) {
+                
+                },
+                fail(error) {
+                  console.log(error)
+                }
+              })
+            } else {
+              console.log('登录失败！' + res.errMsg)
+            }
+          }
+        })
       }
     }
   }
