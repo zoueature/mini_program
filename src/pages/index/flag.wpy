@@ -256,6 +256,11 @@
       onPullDownRefresh() {
         wx.showLoading()
         this.flagList = []
+        if (this.doing) {
+          this.doingFlag = []
+        } else {
+          this.allFlag = []
+        }
         this.getFlagList()
       }
       getFlagList() {
