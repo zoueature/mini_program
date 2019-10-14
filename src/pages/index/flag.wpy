@@ -5,19 +5,19 @@
         <span>进行中</span>
       </div>
       <div class="status-done {{[active === 'done' ? 'active' : '']}}" @tap="switchTab(2)">
-        <span>已完成</span>
+        <span>全部</span>
       </div>
     </div>
-    <div class="flag-cate">
-      <div wx:for="{{cateList}}" wx:for-index="index" wx:for-item="category" class="flag-cate-item">
-        <span>{{category.name}}</span>
-      </div>
-    </div>
-    <div style="margin-top: 255rpx"></div>
+<!--    <div class="flag-cate">-->
+<!--      <div wx:for="{{cateList}}" wx:for-index="index" wx:for-item="category" class="flag-cate-item">-->
+<!--        <span>{{category.name}}</span>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div style="margin-top: 150rpx"></div>
     <div wx:for="{{flagList}}"
          wx:for-index="index"
          wx:for-item="flag"
-         class="flag-item {{ [doing ? 'fromLeft' : 'fromRight'] }}"
+         class="flag-item"
          :class="{'slide': flag.slide}">
       <div class="flag-icon">
         <image src="{{flag.img}}"></image>
@@ -25,14 +25,14 @@
       <div class="flag-name">
         <span>每{{flag.periodName + flag.taskName + flag.taskSizeName}}</span>
         <div class="flag-create-time">
-          <span>{{flag.lastCheckIn}}</span>
+          <span>{{flag.nextCheckIn}}</span>
         </div>
       </div>
       <div class="flag-punch" @tap="setDone({{flag.id}})" ref="{{flag.id}}">
         <i class="fa fa-flag"></i>
       </div>
       <div >
-        <progress active="true" percent="37" show-info  color="#00c7cc" class="flag-process"/>
+        <progress active="true" percent="{{flag.process}}" show-info  color="{{flag.process >= 50 ? '#ef4a38' : '#00c7cc'}}" class="flag-process"/>
       </div>
       
     </div>
@@ -188,7 +188,7 @@
     border-radius: 125rpx;
     position: absolute;
     left: 1%;
-    bottom: 12rpx;
+    bottom: 16rpx;
     color: #777777;
   }
   .flag-punch {
@@ -202,7 +202,7 @@
     color: #00c7cc;
   }
   .flag-punch:hover {
-    color: red;
+    color: #ef4a38;
   }
   .blank {
     height: 70rpx;
@@ -224,25 +224,9 @@
         active: 'doing',
         doing: true,
         deleteQueue:[],
-        cateList: [
-          {
-            name: '生活'
-          },
-          {
-            name: '学习成长'
-          },
-          {
-            name: '运动健身'
-          },
-          {
-            name: '早睡早起'
-          },
-          {
-            name: '早睡早起'
-          }
-        ],
-        flagList: [
-        ]
+        flagList: [],
+        doingFlag: [],
+        allFlag: []
       }
       onLoad() {
         //this.getFlagList()
@@ -271,6 +255,7 @@
       }
       onPullDownRefresh() {
         wx.showLoading()
+        this.flagList = []
         this.getFlagList()
       }
       getFlagList() {
@@ -278,9 +263,25 @@
         wx.request({
           url: api.flagList,
           methods: 'GET',
+          data: {
+            'checkToday': +self.doing
+          },
           success (res) {
             if (res.statusCode === 200 && res.data.code === 0) {
-              self.flagList = res.data.data
+              let flags = res.data.data
+              for (let i = 0; i < flags.length; i++) {
+                flags[i].nextCheckIn = flags[i].nextCheckIn.slice(5)
+                let processPercent = flags[i].destCheckNum != 0 ?
+                  flags[i].checkNum / flags[i].destCheckNum * 100 :
+                  0
+                flags[i].process = processPercent.toFixed(2)
+                if (self.doing) {
+                  self.doingFlag.push(flags[i])
+                } else {
+                  self.allFlag.push(flags[i])
+                }
+              }
+              self.flagList = self.doing ? self.doingFlag : self.allFlag
               self.$apply()
               wx.hideLoading()
               wx.stopPullDownRefresh()
@@ -301,22 +302,28 @@
         },
         switchTab(tab) {
           let oldDoing = this.doing
-          if (+tab === 1)
-          {
+          if (+tab === 1) {
             this.doing = true
             this.active = 'doing'
-          } else
-          {
+            if (this.doingFlag.length === 0) {
+              this.getFlagList()
+            } else {
+              this.flagList = this.doingFlag
+            }
+          } else {
             this.doing = false
             this.active = 'done'
+            if (this.allFlag.length === 0) {
+              this.getFlagList()
+            } else {
+              this.flagList = this.allFlag
+            }
           }
           if (oldDoing !== this.doing) {
             wx.pageScrollTo({
               scrollTop: 0
             })
           }
-          console.log(this.active)
-          console.log(this.doing)
         }
       }
     }
