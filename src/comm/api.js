@@ -5,5 +5,6 @@ module.exports = {
   wxLogin: ucDomain + '/Login/thirdLogin',
   flagList: mileStoneDomain + '/flag/list',
   addFlag: mileStoneDomain + '/flag/add',
-  taskList: mileStoneDomain + '/task/all'
+  taskList: mileStoneDomain + '/task/all',
+  taskCheckIn: mileStoneDomain + '/flag/checkIn'
 }

@@ -28,7 +28,7 @@
           <span>{{flag.nextCheckIn}}</span>
         </div>
       </div>
-      <div class="flag-punch" @tap="setDone({{flag.id}})" ref="{{flag.id}}">
+      <div class="flag-punch" @tap="checkIn({{flag.id}})" ref="{{flag.id}}">
         <i class="fa fa-flag"></i>
       </div>
       <div >
@@ -40,11 +40,13 @@
   </div>
 </template>
 
-<style scoped>
+<style>
+  page {
+    background-color: #f7f7f7;
+  }
   .container {
     width: 100%;
     height: 100%;
-    background-color: #f7f7f7;
     position: absolute;
   }
   .status-tab{
@@ -295,12 +297,40 @@
         })
       }
       methods = {
-        setDone(id, e) {
-          for (let i = 0; i < this.flagList.length; i++) {
-            if (this.flagList[i].id === id) {
-              this.flagList[i].slide = true
-              this.deleteQueue.push(i)
-              this.$apply()
+        checkIn(id, e) {
+          let self = this
+          for (let i = 0; i < self.flagList.length; i++) {
+            if (self.flagList[i].id === id) {
+              wx.request({
+                url: api.taskCheckIn,
+                method: 'POST',
+                data: {
+                  flagId: id,
+                  uid: ''
+                },
+                success(res) {
+                  if (res.statusCode === 200 && res.data.code === 0) {
+                    self.flagList[i].slide = true
+                    self.deleteQueue.push(i)
+                    self.$apply()
+                    wx.showToast({
+                      'icon': 'success',
+                      'title': '打卡成功',
+                    })
+                  } else {
+                    wx.showToast({
+                      'icon': 'none',
+                      'title': res.data.msg,
+                    })
+                  }
+                },
+                fail(error) {
+                  wx.showToast({
+                    'icon': 'none',
+                    'title': '网络错误'
+                  })
+                }
+              })
               break
             }
           }
