@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-    <div wx:if="{{true}}">
+    <div wx:if="{{showAuthButton}}">
       <button open-type="getUserInfo"
               bindgetuserinfo="bindGetUserInfo">
         授权登录

@@ -48,11 +48,10 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/index/flag',
+      'pages/index/create',
       'pages/index/index',
       'pages/mine/chart',
       'pages/mine/me',
-      'pages/index/create',
-      
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -88,7 +87,12 @@ export default class extends wepy.app {
   }
   globalData = {
     userInfo: null,
-    flagList: []
+    flagList: [],
+    pageData: {
+      flag: {
+      
+      }
+    }
   }
 }
 </script>

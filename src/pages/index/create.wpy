@@ -30,7 +30,7 @@
     <div wx:else>
       <div class="picker-section">
         <div class="picker-icon">
-  
+          <i class="fa fa-check-square-o"></i>
         </div>
         <picker mode="multiSelector" bindchange="periodSelectorChange" bindcolumnchange="periodSelectorChange" value="{{periodSelect}}" range="{{periodSelector}}" class="picker">
           <div wx:if="{{periodSelect[0] === 0 }}">
@@ -43,7 +43,7 @@
       </div>
       <div class="picker-section">
         <div class="picker-icon">
-        
+          <i class="fa fa-hourglass-half"></i>
         </div>
         <picker mode="multiSelector" bindcolumnchange="taskSelectChange" value="{{taskSelect}}" range="{{taskSelector}}" class="picker">
           <span>任务量: </span><span>{{taskSelector[0][taskSelect[0]]}}{{taskSelector[1][taskSelect[1]]}}</span>
@@ -51,7 +51,7 @@
       </div>
       <div class="picker-section">
         <div class="picker-icon">
-  
+          <i class="fa fa-flag-o"></i>
         </div>
         <div class="flag-task-show">
           <span>任务</span>
@@ -63,7 +63,12 @@
           </span>
         </div>
       </div>
-      <button type="primary" class="flag-create" @tap="submitFlag">立下FLAG</button>
+      <button type="primary"
+              class="flag-create"
+              plain="{{true}}"
+              @tap="submitFlag">
+        立下FLAG
+      </button>
     </div>
   </div>
 </template>
@@ -155,10 +160,14 @@
     width: 90rpx;
     height: 90rpx;
     border-radius: 90rpx;
-    background-color: #6da3fd;
+    background-color: #00c7cc;
     position: absolute;
     top: 18rpx;
-    left: 10rpx;
+    left: 15rpx;
+    text-align: center;
+    line-height: 90rpx;
+    font-size: 25px;
+    color: #FFFFFF;
   }
   .picker {
     width: 700rpx;
@@ -170,12 +179,14 @@
   }
   .flag-create {
     margin-top: 100rpx;
-    width: 90%;
+    width: 80%;
     height: 100rpx;
     line-height: 100rpx;
+    border-radius: 10rpx;
     font-size: 18px;
     margin-left: auto;
     margin-right: auto;
+    background-color: #00c7cc;
   }
   .flag-task-show {
     font-size: 16px;
@@ -196,6 +207,8 @@
   const STEP_ROOT = 1
   const STEP_CHILD = 2
   const STEP_FORM = 3
+  
+  const CATE_ALL_CACHE_KEY = 'all_category_cache_key'
   
   const PERIOD_ALL = [
     'i',
@@ -223,7 +236,7 @@
       cateList: [],
       flagInfo: {},
       isRoot: true,
-      step: 1,
+      step: STEP_ROOT,
       taskList : [],
       periodSelect: [0,0],
       periodSelector: [
@@ -270,16 +283,27 @@
     onLoad(options) {
       this.isRoot = options.id == undefined ? true : false
       let self = this
-      wx.request({
-        url: api.taskList,
-        methods: "GET",
-        success(res) {
-          if (res.statusCode === 200 && res.data.code === 0) {
-            self.cateList = res.data.data
-            self.$apply();
+      let cacheData = wx.getStorageSync(CATE_ALL_CACHE_KEY)
+      if (cacheData === '') {
+        wx.request({
+          url: api.taskList,
+          methods: "GET",
+          success(res) {
+            if (res.statusCode === 200 && res.data.code === 0) {
+              self.cateList = res.data.data
+              wx.setStorage({
+                key: CATE_ALL_CACHE_KEY,
+                data: res.data.data
+              })
+              self.$apply();
+            }
           }
-        }
-      })
+        })
+      } else {
+        this.cateList = cacheData
+        console.log(cacheData)
+        this.$apply()
+      }
     }
     methods = {
       goSecond(id) {
@@ -289,7 +313,6 @@
             if (id === this.cateList[i][j].categoryId) {
               this.flagInfo.cateInfo = this.cateList[i][j]
               this.taskList = this.cateList[i][j].task
-              console.log(this.taskList)
               this.$apply()
               got = true
               break
@@ -332,6 +355,7 @@
         this.flagInfo.task = this.taskSelect
       },
       submitFlag() {
+        let self = this
         let periodUnitNum = this.flagInfo.period[0]
         let period = this.flagInfo.period[1]
         let periodUnit = PERIOD_ALL[periodUnitNum]
@@ -362,8 +386,9 @@
               wx.showToast({
                 title: '添加成功',
                 icon: 'success',
-                duration: 5000
+                duration: 3000
               })
+              self.$parent.globalData.pageData.flag.refresh = true
               setTimeout(function () {
                 wx.switchTab({
                   url: 'flag',

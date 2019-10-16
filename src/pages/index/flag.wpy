@@ -32,7 +32,14 @@
         <i class="fa fa-flag"></i>
       </div>
       <div >
-        <progress active="true" percent="{{flag.process}}" show-info  color="{{flag.process >= 50 ? '#ef4a38' : '#00c7cc'}}" class="flag-process"/>
+        <progress active="{{true}}"
+                  percent="{{flag.process}}"
+                  show-info="{{true}}"
+                  border-radius="100"
+                  font-size="13px"
+                  duration="10"
+                  color="{{flag.process >= 50 ? '#ef4a38' : '#00c7cc'}}"
+                  class="flag-process"/>
       </div>
       
     </div>
@@ -207,7 +214,7 @@
     color: #ef4a38;
   }
   .blank {
-    height: 70rpx;
+    height: 37rpx;
   }
 </style>
 <script>
@@ -230,7 +237,7 @@
         doingFlag: [],
         allFlag: []
       }
-      onLoad() {
+      onLoad(option) {
         //this.getFlagList()
         this.$parent.globalData.flagList = this.flagList
         setInterval(function (self) {
@@ -249,20 +256,19 @@
         }, 100, this)
       }
       onShow() {
-        if (this.isFirstIn) {
-          wx.showLoading()
+        let needFresh = this.$parent.globalData.pageData.flag.refresh === true
+        console.log(this.$parent.globalData.pageData.flag.refresh, this.isFirstIn)
+        if (this.isFirstIn || needFresh) {
           this.isFirstIn = false
+          this.$parent.globalData.pageData.flag.refresh = false
+          this.onPullDownRefresh()
         }
-        this.getFlagList()
       }
       onPullDownRefresh() {
         wx.showLoading()
         this.flagList = []
-        if (this.doing) {
-          this.doingFlag = []
-        } else {
-          this.allFlag = []
-        }
+        this.doingFlag = []
+        this.allFlag = []
         this.getFlagList()
       }
       getFlagList() {
