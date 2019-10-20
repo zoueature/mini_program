@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <zhezhao :show.sync="periodModelSwitch"></zhezhao>
     <div wx:if="{{step == 1}}">
 <!--      根分类选项页-->
       <div class="flag-cate-line" wx:for="{{cateList}}" wx:for-index="index" wx:for-item="cateArr">
@@ -32,14 +33,42 @@
         <div class="picker-icon">
           <i class="fa fa-check-square-o"></i>
         </div>
-        <picker mode="multiSelector" bindchange="periodSelectorChange" bindcolumnchange="periodSelectorChange" value="{{periodSelect}}" range="{{periodSelector}}" class="picker">
-          <div wx:if="{{periodSelect[0] === 0 }}">
-            <span>每{{periodSelector[1][periodSelect[1]]}}{{periodSelector[0][periodSelect[0]]}}</span>打一次卡
+        <div class="picker" @tap="showPeriodModel">
+          <span>每天打一次卡</span>
+        </div>
+<!--        <picker mode="multiSelector" bindchange="periodSelectorChange" bindcolumnchange="periodSelectorChange" value="{{periodSelect}}" range="{{periodSelector}}" class="picker">-->
+<!--          <div wx:if="{{periodSelect[0] === 0 }}">-->
+<!--            <span>每{{periodSelector[1][periodSelect[1]]}}{{periodSelector[0][periodSelect[0]]}}</span>打一次卡-->
+<!--          </div>-->
+<!--          <div wx:else>-->
+<!--            <span>每{{periodSelector[0][periodSelect[0]]}}{{periodSelector[1][periodSelect[1]]}}</span>打一次卡-->
+<!--          </div>-->
+<!--        </picker>-->
+        <div class="period-create" wx:if="{{periodModelSwitch}}">
+          <div class="weekday-select">
+            <div @tap="selectWeekday(0)" class="{{[activeWeekdayItem[0] === true ? 'weekdaySelected': '']}}">周一</div>
+            <div @tap="selectWeekday(1)" class="{{[activeWeekdayItem[1] === true ? 'weekdaySelected': '']}}">周二</div>
+            <div @tap="selectWeekday(2)" class="{{[activeWeekdayItem[2] === true ? 'weekdaySelected': '']}}">周三</div>
+            <div @tap="selectWeekday(3)" class="{{[activeWeekdayItem[3] === true ? 'weekdaySelected': '']}}">周四</div>
+            <div @tap="selectWeekday(4)" class="{{[activeWeekdayItem[4] === true ? 'weekdaySelected': '']}}">周五</div>
+            <div @tap="selectWeekday(5)" class="{{[activeWeekdayItem[5] === true ? 'weekdaySelected': '']}}">周六</div>
+            <div @tap="selectWeekday(6)" class="{{[activeWeekdayItem[6] === true ? 'weekdaySelected': '']}}">周日</div>
           </div>
-          <div wx:else>
-            <span>每{{periodSelector[0][periodSelect[0]]}}{{periodSelector[1][periodSelect[1]]}}</span>打一次卡
+          <div style="clear: both"></div>
+          <div class="check-num-select">
+          
           </div>
-        </picker>
+          <div class="operate-menu">
+            <button type="primary" @tap="submitPeriod(1)">确定</button>
+            <button type="warn" @tap="submitPeriod(0)">取消</button>
+<!--            <div class="menu-item">-->
+<!--            -->
+<!--            </div>-->
+<!--            <div class="menu-item">-->
+<!--            -->
+<!--            </div>-->
+          </div>
+        </div>
       </div>
       <div class="picker-section">
         <div class="picker-icon">
@@ -195,6 +224,56 @@
     position: absolute;
     line-height: 126rpx;
   }
+  .period-create {
+    background-color: #fcfcfc;
+    border: 1rpx solid #efefef;
+    border-radius: 15rpx;
+    width: 700rpx;
+    height: 400rpx;
+    position: absolute;
+    margin: auto;
+    top: 200rpx;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    animation: fromTop 500ms;
+  }
+  @keyframes fromTop {
+    from {
+      top: -1000rpx;
+    }
+    to {
+      top: 200rpx;
+    }
+  }
+  .weekday-select div {
+    width: 120rpx;
+    margin-left: 10rpx;
+    margin-right: 10rpx;
+    margin-top: 35rpx;
+    height: 70rpx;
+    background: #FFFFFF;
+    float: left;
+    border: 1rpx solid #cccccc;
+    text-align: center;
+    line-height: 70rpx;
+    border-radius: 10rpx;
+  }
+  .operate-menu button {
+    width: 30%;
+    margin-top: 77rpx;
+    text-align: center;
+    line-height: 95rpx;
+    display: block;
+    height: 95rpx;
+    float: left;
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+  .weekday-select .weekdaySelected {
+    background-color: #00c7cc;
+    color:  #FFFFFF;
+  }
 </style>
 
 <config>
@@ -203,6 +282,7 @@
 <script>
   import wepy from 'wepy'
   import api from '../../comm/api'
+  import zhezhao from '../../components/zhezhao'
   
   const STEP_ROOT = 1
   const STEP_CHILD = 2
@@ -231,12 +311,19 @@
       navigationBarTextStyle: 'white',
       navigationBarTitleText: ''
     }
-    
+    components = {
+      zhezhao: zhezhao
+    }
     data = {
+      periodModelSwitch: true,
+      weekdaySelect: [],
+      activeWeekdayItem: [
+        false, false, false, false, false, false, false
+      ],
       cateList: [],
       flagInfo: {},
       isRoot: true,
-      step: STEP_ROOT,
+      step: STEP_FORM,
       taskList : [],
       periodSelect: [0,0],
       periodSelector: [
@@ -402,14 +489,36 @@
           fail() {
             wx.hideLoading()
             wx.showToast({
+              icon: 'none',
               title: '网络错误'
             })
           }
         })
         //console.log(this.flagInfo)
+      },
+      showPeriodModel() {
+        this.periodModelSwitch = !this.periodModelSwitch
+      },
+      submitPeriod(type) {
+        this.periodModelSwitch = !this.periodModelSwitch
+        let buttonType = +type
+        if (buttonType === 0) {
+          this.weekdaySelect = []
+          this.activeWeekdayItem = [
+            false, false, false, false, false, false, false
+          ]
+        }
+      },
+      selectWeekday(weekday) {
+        let index = this.weekdaySelect.indexOf(weekday)
+        if (index < 0) {
+          this.weekdaySelect.push(weekday)
+        } else {
+          this.weekdaySelect.splice(index, 1)
+        }
+        this.activeWeekdayItem[weekday] = !this.activeWeekdayItem[weekday]
       }
     }
   }
 </script>
-
 

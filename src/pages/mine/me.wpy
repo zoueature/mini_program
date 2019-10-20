@@ -35,6 +35,14 @@
           </div>
         </navigator>
       </div>
+      <div class="setting-item">
+        <i class="fa fa-comment setting-icon"></i>
+        <button class="feedback"
+                open-type="contact"
+                bindcontact="handleContact">
+          问题及意见
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -119,6 +127,21 @@
     font-size: 20px;
     color: #333333;
   }
+  .feedback {
+    border: none;
+    outline: none;
+    text-align: left;
+    background: #FFFFFF;
+    color: #777777;
+    line-height: 145rpx;
+    font-size: 16px;
+    display: inline;
+    padding: 0;
+    margin: 0;
+  }
+  .feedback::after{
+    border: none;
+  }
 </style>
 
 <script>
@@ -156,6 +179,14 @@
         fail (error) {
           self.showAuthButton = true
           self.$apply()
+        }
+      })
+      wx.request({
+        url: api.getUserInfo,
+        success(res) {
+        },
+        fail() {
+        
         }
       })
     }

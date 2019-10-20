@@ -299,6 +299,13 @@
               wx.hideLoading()
               wx.stopPullDownRefresh()
             }
+          },
+          fail(error) {
+            wx.showToast({
+              title: '网络错误',
+              icon: 'none'
+            })
+            wx.hideLoading()
           }
         })
       }
