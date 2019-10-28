@@ -5,17 +5,17 @@
 <!--      根分类选项页-->
       <div class="flag-cate-line" wx:for="{{cateList}}" wx:for-index="index" wx:for-item="cateArr">
         <div wx:for="{{cateArr}}" wx:for-index="index" wx:for-item="cate" @tap="goSecond({{cate.categoryId}})">
-<!--          <navigator url="/pages/index/create?id={{cate.id}}&step=2">-->
-            <div class="flag-cate-column" style="background-image: url({{cate.categoryImg}}); background-size: 100% 100%;background-repeat: no-repeat">
-              <span>{{cate.categoryName}}</span>
+          <div class="flag-cate-column" style="background-image: url({{cate.categoryImg}}); background-size: 100% 100%;background-repeat: no-repeat">
+            <div class="remove-button" catchtap="deleteCate({{cate.categoryId}})" wx:if="{{showRemoveButton}}">
+              <i class="fa fa-window-minimize"></i>
             </div>
-<!--          </navigator>-->
+            <span>{{cate.categoryName}}</span>
+          </div>
         </div>
       </div>
     </div>
     <div wx:elif="{{step == 2}}">
       <div wx:for="{{taskList}}" class="flag-child-cate-item" @tap="goThird({{item.taskId}})">
-<!--        <navigator url="/pages/index/create?id={{item.id}}&step=3">-->
           <div class="flag-child-cate-item-icon">
             <image src="{{item.taskImg}}"></image>
           </div>
@@ -25,7 +25,6 @@
           <div class="flag-child-cate-item-go">
             <i class="fa fa-angle-right"></i>
           </div>
-<!--        </navigator>-->
       </div>
     </div>
     <div wx:else>
@@ -34,7 +33,14 @@
           <i class="fa fa-check-square-o"></i>
         </div>
         <div class="picker" @tap="showPeriodModel">
-          <span>每天打一次卡</span>
+          <span wx:if="{{weekdaySelect.length === 0}}">
+            选择打卡时间
+          </span>
+          <span wx:else class="showPeriod">
+            <span wx:for="{{weekdayNameSelect}}">
+              {{[item != undefined ? item : '']}}
+            </span>
+          </span>
         </div>
 <!--        <picker mode="multiSelector" bindchange="periodSelectorChange" bindcolumnchange="periodSelectorChange" value="{{periodSelect}}" range="{{periodSelector}}" class="picker">-->
 <!--          <div wx:if="{{periodSelect[0] === 0 }}">-->
@@ -46,12 +52,12 @@
 <!--        </picker>-->
         <div class="period-create" wx:if="{{periodModelSwitch}}">
           <div class="weekday-select">
-            <div @tap="selectWeekday(0)" class="{{[activeWeekdayItem[0] === true ? 'weekdaySelected': '']}}">周一</div>
-            <div @tap="selectWeekday(1)" class="{{[activeWeekdayItem[1] === true ? 'weekdaySelected': '']}}">周二</div>
-            <div @tap="selectWeekday(2)" class="{{[activeWeekdayItem[2] === true ? 'weekdaySelected': '']}}">周三</div>
-            <div @tap="selectWeekday(3)" class="{{[activeWeekdayItem[3] === true ? 'weekdaySelected': '']}}">周四</div>
-            <div @tap="selectWeekday(4)" class="{{[activeWeekdayItem[4] === true ? 'weekdaySelected': '']}}">周五</div>
-            <div @tap="selectWeekday(5)" class="{{[activeWeekdayItem[5] === true ? 'weekdaySelected': '']}}">周六</div>
+            <div @tap="selectWeekday(5)" class="{{[activeWeekdayItem[5] === true ? 'weekdaySelected': '']}}">周一</div>
+            <div @tap="selectWeekday(4)" class="{{[activeWeekdayItem[4] === true ? 'weekdaySelected': '']}}">周二</div>
+            <div @tap="selectWeekday(3)" class="{{[activeWeekdayItem[3] === true ? 'weekdaySelected': '']}}">周三</div>
+            <div @tap="selectWeekday(2)" class="{{[activeWeekdayItem[2] === true ? 'weekdaySelected': '']}}">周四</div>
+            <div @tap="selectWeekday(1)" class="{{[activeWeekdayItem[1] === true ? 'weekdaySelected': '']}}">周五</div>
+            <div @tap="selectWeekday(0)" class="{{[activeWeekdayItem[0] === true ? 'weekdaySelected': '']}}">周六</div>
             <div @tap="selectWeekday(6)" class="{{[activeWeekdayItem[6] === true ? 'weekdaySelected': '']}}">周日</div>
           </div>
           <div style="clear: both"></div>
@@ -84,11 +90,8 @@
         </div>
         <div class="flag-task-show">
           <span>任务</span>
-          <span wx:if="{{flagInfo.period[0] === 0 || flagInfo.period[0] === 1 || flagInfo.period[0] === 2}}">
-            每{{periodSelector[1][flagInfo.period[1]]}}{{periodSelector[0][flagInfo.period[0]]}}{{flagInfo.taskInfo.taskName}}{{taskSelector[0][flagInfo.task[0]]}}{{taskSelector[1][flagInfo.task[1]]}}
-          </span>
-          <span wx:else>
-            每{{periodSelector[0][flagInfo.period[0]]}}{{periodSelector[1][flagInfo.period[1]]}}{{flagInfo.taskInfo.taskName}}{{taskSelector[0][flagInfo.task[0]]}}{{taskSelector[1][flagInfo.task[1]]}}
+          <span>
+            {{flagInfo.taskInfo.taskName}}{{taskSelector[0][flagInfo.task[0]]}}{{taskSelector[1][flagInfo.task[1]]}}
           </span>
         </div>
       </div>
@@ -98,6 +101,14 @@
               @tap="submitFlag">
         立下FLAG
       </button>
+    </div>
+    <div class="add-button" wx:if="{{step === 1 || step === 2}}">
+      <div wx:if="{{showRemoveButton}}" @tap="removeOrAddButton">
+        <i class="fa fa-check"></i>
+      </div>
+      <div wx:else @tap="remove">
+        <i class="fa fa-plus-square-o"></i>
+      </div>
     </div>
   </div>
 </template>
@@ -128,6 +139,7 @@
     text-align: center;
     line-height: 124rpx;
     font-weight: bolder;
+    position: relative;
   }
   .flag-child-cate-item {
     width: 98%;
@@ -247,8 +259,8 @@
     }
   }
   .weekday-select div {
-    width: 120rpx;
-    margin-left: 10rpx;
+    width: 110rpx;
+    margin-left: 19rpx;
     margin-right: 10rpx;
     margin-top: 35rpx;
     height: 70rpx;
@@ -274,6 +286,37 @@
     background-color: #00c7cc;
     color:  #FFFFFF;
   }
+  .showPeriod {
+    font-size: 12px;
+  }
+  .add-button {
+    width: 100rpx;
+    height: 100rpx;
+    position: fixed;
+    bottom: 245rpx;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border: 1rpx solid #dddddd;
+    border-radius: 100rpx;
+    line-height: 100rpx;
+    text-align: center;
+    font-size: 30px;
+    color: #aaaaaa;
+  }
+  .remove-button {
+    width: 40rpx;
+    height: 40rpx;
+    background-color: red;
+    position: absolute;
+    border-radius: 45rpx;
+    overflow: hidden;
+    right: -10rpx;
+    color: #FFFFFF;
+    font-size: 12px;
+    line-height: 28rpx;
+    text-align: center;
+  }
 </style>
 
 <config>
@@ -290,19 +333,20 @@
   
   const CATE_ALL_CACHE_KEY = 'all_category_cache_key'
   
-  const PERIOD_ALL = [
-    'i',
-    'h',
-    'd',
-    'w',
-    'm',
-    'y'
-  ]
   const TASK_UNIT_ALL = [
     'i',
     'h',
     'g',
     'z'
+  ]
+  const WEEK_NAME = [
+    '星期日',
+    '星期一',
+    '星期二',
+    '星期三',
+    '星期四',
+    '星期五',
+    '星期六'
   ]
   
   export default class create extends wepy.page {
@@ -315,52 +359,18 @@
       zhezhao: zhezhao
     }
     data = {
-      periodModelSwitch: true,
+      periodModelSwitch: false,
+      showRemoveButton: false,
       weekdaySelect: [],
+      weekdayNameSelect: [],
       activeWeekdayItem: [
         false, false, false, false, false, false, false
       ],
       cateList: [],
       flagInfo: {},
       isRoot: true,
-      step: STEP_FORM,
+      step: STEP_ROOT,
       taskList : [],
-      periodSelect: [0,0],
-      periodSelector: [
-        [
-          '分钟',
-          '小时',
-          '日',
-          '周',
-          '月',
-          '年'
-        ],
-        [
-          1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59
-        ]
-      ],
-      periodAll: [
-        [
-          [
-            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59
-          ],
-          [
-            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
-          ],
-          [
-            1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100
-          ],
-          [
-            '星期日','星期一','星期二','星期三','星期四','星期五','星期六'
-          ],
-          [
-            '1号','2号','3号','4号','5号','6号','7号','8号','9号','10号','11号','12号','13号','14号','15号','16号','17号','18号','19号','20号','21号','22号','23号','24号','25号','26号','27号','28号','29号','30号','31号'
-          ],
-          [
-            '一月','二月','三月','四月','五月','六月','七月','八月','九月','十年','十一月','十二月'
-          ]
-        ]
-      ],
       taskSelect: [0,0],
       taskSelector: [
         [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100],
@@ -443,25 +453,24 @@
       },
       submitFlag() {
         let self = this
-        let periodUnitNum = this.flagInfo.period[0]
-        let period = this.flagInfo.period[1]
-        let periodUnit = PERIOD_ALL[periodUnitNum]
-        if (periodUnit !== 'w') {
-          period ++
-        }
-        
+        let period = this.weekdaySelect
         let taskSize = ++this.flagInfo.task[0]
         let taskSizeUnitNum = this.flagInfo.task[1]
         let taskSizeUnit = TASK_UNIT_ALL[taskSizeUnitNum]
-        
+        let periodNum = 0
+        for (let i = 0; i < period.length; i ++) {
+          let n = Math.abs(period[i])
+          periodNum += Math.pow(2, n)
+        }
         let postFlag = {
           'categoryId': this.flagInfo.cateInfo.categoryId,
           'taskId': this.flagInfo.taskInfo.taskId,
-          'period': period,
-          'periodUnit': periodUnit,
+          'period': periodNum,
           'taskSize': taskSize,
           'taskSizeUnit': taskSizeUnit
         }
+        console.log(period)
+        console.log(postFlag)
         wx.showLoading();
         wx.request({
           url: api.addFlag,
@@ -504,19 +513,51 @@
         let buttonType = +type
         if (buttonType === 0) {
           this.weekdaySelect = []
+          this.weekdayNameSelect = []
           this.activeWeekdayItem = [
             false, false, false, false, false, false, false
           ]
         }
+        this.$apply()
       },
       selectWeekday(weekday) {
         let index = this.weekdaySelect.indexOf(weekday)
         if (index < 0) {
           this.weekdaySelect.push(weekday)
+          this.weekdaySelect.sort()
+          this.weekdayNameSelect[Math.abs(weekday - 6)] = WEEK_NAME[Math.abs(weekday - 6)]
         } else {
+          this.weekdayNameSelect[Math.abs(this.weekdaySelect[index] - 6)] = undefined
           this.weekdaySelect.splice(index, 1)
         }
+        console.log(this.weekdayNameSelect)
         this.activeWeekdayItem[weekday] = !this.activeWeekdayItem[weekday]
+      },
+      remove () {
+        this.showRemoveButton = true
+      },
+      deleteCate (cateId, event) {
+        console.log(cateId)
+        wx.request({
+          url: api.cateRemove,
+          method: "POST",
+          data: {
+            cateId: cateId
+          },
+          success() {
+          },
+          fail() {
+          }
+        })
+      },
+      removeOrAddButton() {
+        console.log(this.showRemoveButton)
+        if (this.showRemoveButton) {
+          this.showRemoveButton = false
+          return null
+        } else {
+        
+        }
       }
     }
   }

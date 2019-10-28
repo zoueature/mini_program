@@ -11,4 +11,5 @@ module.exports = {
   taskCheckIn: mileStoneDomain + '/flag/checkIn',
   //task
   taskList: mileStoneDomain + '/task/all',
+  cateRemove: mileStoneDomain + '/category/remove'
 }

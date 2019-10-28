@@ -28,10 +28,30 @@
           <span>{{flag.nextCheckIn}}</span>
         </div>
       </div>
-      <div class="flag-punch" @tap="checkIn({{flag.id}})" ref="{{flag.id}}">
+      <div class="flag-punch" @tap="checkIn({{flag.id}})" ref="{{flag.id}}" wx:if="{{active === 'doing'}}">
         <i class="fa fa-flag"></i>
       </div>
-      <div >
+      <div wx:else>
+        <div class="flag-info">
+          <div class="checked-info">
+            <div class="info-icon">
+              <i class="fa fa-check"></i>
+            </div>
+            <div class="info-num">
+              <span>{{flag.checkNum}}</span>
+            </div>
+          </div>
+          <div class="dest-info">
+            <div class="info-icon">
+              <i class="fa fa-trophy"></i>
+            </div>
+            <div class="info-num">
+              <span>{{flag.destCheckNum}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
         <progress active="{{true}}"
                   percent="{{flag.process}}"
                   show-info="{{true}}"
@@ -216,6 +236,29 @@
   .blank {
     height: 37rpx;
   }
+  .flag-info {
+    margin-top: 5rpx;
+  }
+  .checked-info, .dest-info {
+    font-size: 14px;
+    margin-left: 100rpx;
+    color: #555555;
+    clear: both;
+    margin-top: 10rpx;
+  }
+  .info-icon {
+    color: #555555;
+    font-size: 16px;
+    width: 50rpx;
+    text-align: center;
+    line-height: 50rpx;
+  }
+  .info-num {
+    color: #777777;
+    font-size: 12px;
+    line-height: 50rpx;
+    margin-left: 10rpx;
+  }
 </style>
 <script>
     import wepy from 'wepy'
@@ -235,7 +278,11 @@
         deleteQueue:[],
         flagList: [],
         doingFlag: [],
-        allFlag: []
+        allFlag: [],
+        listRequestLock: [
+          false,
+          false
+        ]
       }
       onLoad(option) {
         //this.getFlagList()
@@ -272,12 +319,18 @@
         this.getFlagList()
       }
       getFlagList() {
+        let checkStatus = +this.doing
+        if (this.listRequestLock[checkStatus]) {
+          wx.hideLoading()
+          return null
+        }
+        this.listRequestLock[checkStatus] = true
         let self = this
         wx.request({
           url: api.flagList,
           methods: 'GET',
           data: {
-            'checkToday': +self.doing
+            'checkToday': checkStatus
           },
           success (res) {
             if (res.statusCode === 200 && res.data.code === 0) {
@@ -296,9 +349,9 @@
               }
               self.flagList = self.doing ? self.doingFlag : self.allFlag
               self.$apply()
-              wx.hideLoading()
-              wx.stopPullDownRefresh()
             }
+            wx.hideLoading()
+            wx.stopPullDownRefresh()
           },
           fail(error) {
             wx.showToast({
@@ -306,6 +359,9 @@
               icon: 'none'
             })
             wx.hideLoading()
+          },
+          complete() {
+            self.listRequestLock[checkStatus] = false
           }
         })
       }
@@ -353,18 +409,18 @@
           if (+tab === 1) {
             this.doing = true
             this.active = 'doing'
+            this.flagList = this.doingFlag
             if (this.doingFlag.length === 0) {
+              wx.showLoading()
               this.getFlagList()
-            } else {
-              this.flagList = this.doingFlag
             }
           } else {
             this.doing = false
             this.active = 'done'
+            this.flagList = this.allFlag
             if (this.allFlag.length === 0) {
+              wx.showLoading()
               this.getFlagList()
-            } else {
-              this.flagList = this.allFlag
             }
           }
           if (oldDoing !== this.doing) {
