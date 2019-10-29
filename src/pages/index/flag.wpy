@@ -381,11 +381,13 @@
                   if (res.statusCode === 200 && res.data.code === 0) {
                     self.flagList[i].slide = true
                     self.deleteQueue.push(i)
+                    self.allFlag = []
                     self.$apply()
                     wx.showToast({
                       'icon': 'success',
                       'title': '打卡成功',
                     })
+                    
                   } else {
                     wx.showToast({
                       'icon': 'none',
