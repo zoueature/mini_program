@@ -23,9 +23,17 @@
         <image src="{{flag.img}}"></image>
       </div>
       <div class="flag-name">
-        <span>每{{flag.periodName + flag.taskName + flag.taskSizeName}}</span>
+        <div class="flag-name-show">
+          <i class="fa fa-transgender-alt info-icon"></i>
+          <span class="show-info">{{flag.taskName + flag.taskSizeName}}</span>
+        </div>
+        <div class="check-period-show ">
+          <i class="fa fa-calendar-check-o info-icon"></i>
+          <span class="show-info">{{flag.periodNameString}}</span>
+        </div>
         <div class="flag-create-time">
-          <span>{{flag.nextCheckIn}}</span>
+          <i class="fa fa-clock-o info-icon"></i>
+          <span class="show-info">{{flag.nextCheckIn}}</span>
         </div>
       </div>
       <div class="flag-punch" @tap="checkIn({{flag.id}})" ref="{{flag.id}}" wx:if="{{active === 'doing'}}">
@@ -203,11 +211,10 @@
   }
   .flag-create-time {
     width: 45%;
-    height: 30rpx;
     position: absolute;
-    bottom: 45rpx;
+    bottom: 33rpx;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 26rpx;
     color: #777777;
     line-height: 30rpx;
   }
@@ -237,14 +244,14 @@
     height: 37rpx;
   }
   .flag-info {
-    margin-top: 5rpx;
+    margin-top: 20rpx;
   }
   .checked-info, .dest-info {
     font-size: 14px;
-    margin-left: 100rpx;
+    margin-left: 150rpx;
     color: #555555;
     clear: both;
-    margin-top: 10rpx;
+    margin-top: 5rpx;
   }
   .info-icon {
     color: #555555;
@@ -256,13 +263,40 @@
   .info-num {
     color: #777777;
     font-size: 12px;
-    line-height: 50rpx;
+    line-height: 52rpx;
     margin-left: 10rpx;
+  }
+  .check-period-show {
+    font-size: 23rpx;
+    position: absolute;
+    top: 41rpx;
+    color: #555555;
+  }
+  .flag-name-show {
+    font-size: 14px;
+    position: absolute;
+    top: -6rpx;
+  }
+  .show-info {
+    padding-left: 15rpx;
+  }
+  .info-icon {
+    font-size: 25rpx;
   }
 </style>
 <script>
     import wepy from 'wepy'
     import api from '../../comm/api'
+    
+    const WEEK_DAY_INFO = [
+      '周日',
+      '周一',
+      '周二',
+      '周三',
+      '周四',
+      '周五',
+      '周六'
+    ]
     
     export default class flag extends wepy.page {
       config = {
@@ -341,6 +375,18 @@
                   flags[i].checkNum / flags[i].destCheckNum * 100 :
                   0
                 flags[i].process = processPercent.toFixed(2)
+                let periodNameArr = []
+                for (let j = flags[i].period.length - 1; j>= 0; j--) {
+                  if (+flags[i].period[j] === 1) {
+                    let periodName = WEEK_DAY_INFO[7 - flags[i].period.length + j]
+                    periodNameArr.unshift(periodName)
+                  }
+                }
+                if (periodNameArr.length === 7) {
+                  flags[i].periodNameString = '每天'
+                } else {
+                  flags[i].periodNameString = periodNameArr.join('、')
+                }
                 if (self.doing) {
                   self.doingFlag.push(flags[i])
                 } else {

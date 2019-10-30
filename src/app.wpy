@@ -65,20 +65,20 @@ export default class extends wepy.app {
       borderStyle: 'black',
       list: [
         {
-          selectedIconPath: 'assets/main/home-ed.png',
+          selectedIconPath: 'assets/main/home-selected.png',
           iconPath: 'assets/main/home.png',
-          pagePath: 'pages/index/flag',
+          pagePath: 'pages/index/index',
           text: '创建'
         },
         {
-          selectedIconPath: 'assets/main/home-ed.png',
-          iconPath: 'assets/main/home.png',
-          pagePath: 'pages/index/index',
-          text: '首页'
+          selectedIconPath: 'assets/main/list-selected.png',
+          iconPath: 'assets/main/list.png',
+          pagePath: 'pages/index/flag',
+          text: '列表'
         },
         {
-          selectedIconPath: 'assets/main/home-ed.png',
-          iconPath: 'assets/main/home.png',
+          selectedIconPath: 'assets/main/user-selected.png',
+          iconPath: 'assets/main/user.png',
           pagePath: 'pages/mine/me',
           text: '我的'
         }
