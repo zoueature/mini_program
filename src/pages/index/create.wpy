@@ -108,7 +108,7 @@
         <i class="fa fa-check"></i>
       </div>
       <div wx:else @tap="remove">
-        <i class="fa fa-plus-square-o"></i>
+        <i class="fa fa-plus"></i>
       </div>
     </div>
   </div>
@@ -368,6 +368,7 @@
         false, false, false, false, false, false, false
       ],
       cateList: [],
+      cateAll: [],
       flagInfo: {},
       isRoot: true,
       step: STEP_ROOT,
@@ -388,21 +389,33 @@
           url: api.taskList,
           methods: "GET",
           success(res) {
-            if (res.statusCode === 200 && res.data.code === 0) {
-              self.cateList = res.data.data
+            if (res.statusCode === 200 && res.data.code === 0 && +res.data.data.all.length !== 0) {
+              self.cateList = self.formatCateList(res.data.data.all)
+              self.cateAll = res.data.data.all
               wx.setStorage({
                 key: CATE_ALL_CACHE_KEY,
-                data: res.data.data
+                data: res.data.data.all
               })
               self.$apply();
             }
           }
         })
       } else {
-        this.cateList = cacheData
-        console.log(cacheData)
-        this.$apply()
+        this.cateAll = cacheData
+        this.cateList = self.formatCateList(cacheData)
       }
+    }
+    formatCateList(cateList) {
+      let formatCate = []
+      let tmpCate = []
+      for (let i = 1; i <= cateList.length; i++) {
+        tmpCate.push(cateList[i - 1])
+        if (i %5 === 0 || i === +cateList.length) {
+          formatCate.push(tmpCate)
+          tmpCate = []
+        }
+      }
+      return formatCate
     }
     methods = {
       goSecond(id) {
@@ -537,17 +550,41 @@
       remove () {
         this.showRemoveButton = true
       },
-      deleteCate (cateId, event) {
-        console.log(cateId)
+      deleteCate (cateId) {
+        let self = this
         wx.request({
           url: api.cateRemove,
           method: "POST",
           data: {
             cateId: cateId
           },
-          success() {
+          success(res) {
+            if (res.statusCode === 200 && res.data.code === 0) {
+              if (+self.cateAll.length !== 0) {
+                for (let i = 0; i < self.cateAll.length; i ++) {
+                  if (self.cateAll[i].categoryId === cateId) {
+                    self.cateAll.splice(i, 1)
+                    break
+                  }
+                }
+                wx.setStorage({
+                  key: CATE_ALL_CACHE_KEY,
+                  data: self.cateAll
+                })
+                self.cateList = self.formatCateList(self.cateAll)
+                self.$apply()
+              }
+              wx.showToast({
+                title: '成功删除',
+                icon: 'none'
+              })
+            }
           },
           fail() {
+            wx.showToast({
+              title: '网络错误',
+              icon: 'none'
+            })
           }
         })
       },

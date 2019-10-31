@@ -1,6 +1,8 @@
 let mileStoneDomain =  'http://192.168.8.202:8080'
 let ucDomain = 'http://127.0.0.1:9090'
 
+mileStoneDomain = 'http://127.0.0.1:8080'
+
 module.exports = {
   //user
   wxLogin: ucDomain + '/Login/thirdLogin',
