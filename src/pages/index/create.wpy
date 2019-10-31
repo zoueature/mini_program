@@ -384,7 +384,7 @@
       this.isRoot = options.id == undefined ? true : false
       let self = this
       let cacheData = wx.getStorageSync(CATE_ALL_CACHE_KEY)
-      if (cacheData === '') {
+      if (cacheData === '' || !this.$parent.globalData.hasSyncCate) {
         wx.request({
           url: api.taskList,
           methods: "GET",
@@ -392,6 +392,7 @@
             if (res.statusCode === 200 && res.data.code === 0 && +res.data.data.all.length !== 0) {
               self.cateList = self.formatCateList(res.data.data.all)
               self.cateAll = res.data.data.all
+              self.$parent.globalData.hasSyncCate = true
               wx.setStorage({
                 key: CATE_ALL_CACHE_KEY,
                 data: res.data.data.all

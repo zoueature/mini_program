@@ -92,7 +92,8 @@ export default class extends wepy.app {
       flag: {
       
       }
-    }
+    },
+    hasSyncCate: false
   }
 }
 </script>
