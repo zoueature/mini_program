@@ -1,8 +1,12 @@
 <template>
   <div class="container">
+    <div class="show-day" wx:if="{{timeInfo.day != 0}}">
+      <span class="bold-day-num">{{timeInfo.day}}</span>
+      天
+    </div>
     <div class="create-button">
       <div class="show-year">
-        <p>{{timeInfo.year+'年'+timeInfo.month+'月'+timeInfo.day+'天'}}</p><br/>
+<!--        <p>{{timeInfo.year+'年'+timeInfo.month+'月'+timeInfo.day+'天'}}</p><br/>-->
       </div>
       <navigator url="/pages/index/create">
         <div class="create-real-button">
@@ -14,8 +18,11 @@
       <div class="bolang b3 bolang3"></div>
       <div class="bolang b4 bolang4"></div>
     </div>
+    <div class="help">
+      <span>点击按钮以创建里程碑</span>
+    </div>
     <div class="setting-icon" @tap="setStartTime">
-      <i class="fa fa-clock-o"></i>
+      <i class="fa fa-gear"></i>
     </div>
     <showModel :show.sync="showCreateModel" :msg.sync="msg"></showModel>
   </div>
@@ -99,14 +106,39 @@
   
   .setting-icon {
     position: fixed;
-    left: 83%;
-    top: 95rpx;
+    left: 80%;
+    top: 10%;
     width: 100rpx;
     height: 100rpx;
     line-height: 100rpx;
     text-align: center;
     font-size: 35px;
     color: #999999;
+  }
+  .help {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    height: 10rpx;
+    margin: auto;
+    top: 35%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: #bbbbbb;
+    font-size: 25rpx;
+  }
+  .show-day {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    z-index: 1000;
+    top: 20%;
+  }
+  .bold-day-num {
+    font-size: 50px;
+    color:  #00c7cc;
   }
 </style>
 
@@ -116,9 +148,10 @@
 <script>
     import wepy from 'wepy'
     import showModel from '../../components/show-model'
-
-
+    const TIMER_PERIOD_STORAGE_KEY = 'the_period_of_timer';
+    const TIMER_NEXT_DATE_KEY = 'the_next_date';
     const month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    
     export default class index extends wepy.page {
       config = {
         navigationBarBackgroundColor: '#00c7cc',
@@ -132,8 +165,7 @@
         birthday: '1994-10-13 00:18:56',
         lastTime: 0,
         timeInfo: {
-          year: 0,
-          month: 0,
+          allSecondsLeft: 0,
           day: 0,
           hour: 0,
           minute: 0,
@@ -142,9 +174,6 @@
         showCreateModel: false
       }
       onReady() {
-        let info = this.getDateInfo()
-        let timeInfo = this.calTimeInfo(info.origin, info.now)
-        this.timeInfo = timeInfo
         this.asyncTime(this)
         wx.authorize({
           scope: "scope.werun",
@@ -157,109 +186,36 @@
           }
         })
       }
-      getDateInfo () {
-        let formatDate = this.birthday.replace(/-/g, '/')
-        let birthdayDate = new Date(formatDate)
-        let nowDate = new Date()
-        return {
-          now: nowDate,
-          origin: birthdayDate
-        }
-      }
-      /** */
-      calTimeInfo(timeOrigin, timeNow) {
-        let nowYear = timeNow.getFullYear()
-        let originYear = timeOrigin.getFullYear()
-        let nowMonth = timeNow.getMonth()
-        let originMonth = timeOrigin.getMonth()
-        let nowDay = timeNow.getDay()
-        let originDay = timeOrigin.getDay()
-        let nowHour = timeNow.getHours()
-        let originHour = timeOrigin.getHours()
-        let nowMinute = timeNow.getMinutes()
-        let originMinute = timeOrigin.getMinutes()
-        let nowSecond = timeNow.getSeconds()
-        let originSecond = timeOrigin.getSeconds()
-        let diffYear = nowYear - originYear
-        let diffMonth = nowMonth - originMonth
-        let diffDay = nowDay - originDay
-        let diffHour = nowHour - originHour
-        let diffMinute = nowMinute - originMinute
-        let diffSecond = nowSecond - originSecond
-        
-        if (diffMonth <= 0) {
-          diffMonth += 12
-          diffYear --
-        }
-        if (diffDay <= 0) {
-          diffMonth --
-          let monthDay = month[nowMonth]
-          if (nowYear / 4 === 0 && nowMonth === 1) {
-            monthDay = 29
-          }
-          diffDay += monthDay
-        }
-        if (diffHour <= 0) {
-          diffDay --
-          diffHour += 24
-        }
-        if (diffMinute <= 0) {
-          diffHour --
-          diffMinute += 60
-        }
-        if (diffSecond <= 0) {
-          diffMinute --
-          diffSecond += 60
-        }
-        return {
-          year: diffYear,
-          month: diffMonth,
-          day: diffDay,
-          hour: diffHour,
-          minute: diffMinute,
-          second: diffSecond
-        }
-      }
       asyncTime(self) {
+        let nextDateCache = wx.getStorageSync(TIMER_NEXT_DATE_KEY)
+        let now = new Date()
+        if (nextDateCache === '') {
+          var nextDate = new Date()
+          nextDate.setDate(now.getDate() + 1)
+        } else {
+          var nextDate = new Date(nextDateCache)
+        }
+        let diffMillionSecond = nextDate.getTime() - now.getTime()
+        let second = diffMillionSecond / 1000
+        second = second.toFixed()
+        self.timeInfo.allSecondsLeft = second
         setInterval(function (self) {
-          let nowDate = new Date()
-          let nowMonth = nowDate.getMonth()
-          let nowYear = nowDate.getFullYear()
-          let step = 1
-          let info = self.getDateInfo()
-          if (self.timeInfo == null) {
-            self.timeInfo = self.calTimeInfo(info.origin, info.now)
-          }
-          let timeInfo = self.timeInfo
-          if (step > 60) {
-            return false
-          }
-          timeInfo.second += step
-          if (timeInfo.second >= 60) {
-            timeInfo.minute ++
-            timeInfo.second -= 60
-          }
-          if (timeInfo.minute >= 60) {
-            timeInfo.hour ++
-            timeInfo.minute -= 60
-          }
-          if (timeInfo.hour >= 24) {
-            timeInfo.day ++
-            timeInfo.hour -= 24
-          }
-          let monthDay = month[nowMonth]
-          if (nowYear / 4 === 0 && nowMonth === 1) {
-            monthDay = 29
-          }
-          if (timeInfo.day > monthDay) {
-            timeInfo.month ++
-            timeInfo.day -= monthDay
-          }
-          if (timeInfo.month > 12) {
-            timeInfo.year ++
-            timeInfo.month -= 12
-          }
-          self.timeInfo = timeInfo
+          let secLeft = 0
+          let minLeft = 0
+          let hourLeft = 0
+          let day = 0
+          let second = self.timeInfo.allSecondsLeft
+          secLeft = second % 60
+          let min = ((second - secLeft) / 60).toFixed()
+          minLeft = (min % 60).toFixed()
+          let hour = ((min - minLeft) / 60).toFixed()
+          hourLeft = (hour % 24).toFixed()
+          day = ((hour - hourLeft) / 24).toFixed()
+          self.timeInfo.allSecondsLeft --
+          self.timeInfo.day = day
+          self.timeInfo.hour = hourLeft
+          self.timeInfo.minute = minLeft
+          self.timeInfo.second = secLeft
           self.$apply()
         }, 1000, self)
       }
