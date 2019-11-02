@@ -106,14 +106,14 @@
   
   .setting-icon {
     position: fixed;
-    left: 80%;
-    top: 10%;
+    left: 85%;
+    top: 5%;
     width: 100rpx;
     height: 100rpx;
     line-height: 100rpx;
     text-align: center;
-    font-size: 35px;
-    color: #999999;
+    font-size: 25px;
+    color: #bcbcbc;
   }
   .help {
     position: fixed;

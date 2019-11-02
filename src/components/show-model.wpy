@@ -32,8 +32,12 @@
           年
         </div>
       </div>
-      <div wx:else>
-        123
+      <div wx:else class="date-select">
+        <picker mode="date" value="{{date}}" bindchange="bindDateChange">
+          <div class="picker">
+             <i class="fa fa-calendar date-icon"></i>{{date}}
+          </div>
+        </picker>
       </div>
     </div>
   </div>
@@ -49,7 +53,7 @@
     bottom: 0;
     animation: zoom 500ms;
     overflow: hidden;
-    border: 1rpx solid #dedede;
+    border: 1rpx solid #eaeaea;
     background-color: #FFFFFF;
     border-radius: 25rpx;
     position: fixed;
@@ -107,6 +111,22 @@
       /*transform: rotate(360deg);*/
     }
   }
+  .date-select {
+    margin-top: 70rpx;
+    width: 50%;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .date-icon {
+    font-size: 16px;
+    color: #00c7cc;
+    margin-right: 40rpx;
+  }
+  .picker {
+    color: #777777;
+    font-size: 28rpx;
+  }
   .active {
     border: 3rpx solid #00c7cc;
     color: #00c7cc;
@@ -125,7 +145,10 @@
       showModelSwitch: this.show,
       selectType: TYPE_FIXED,
       periodActive: [false,false,false,false],
-      periodActiveDefault: [false,false,false,false]
+      periodActiveDefault: [false,false,false,false],
+      date: null,
+      time: null,
+      start: null
     }
     props = {
       show: Boolean,
@@ -137,6 +160,29 @@
     }
 
     methods = {
+      bindDateChange (e) {
+        let date = e.detail.value
+        this.date = date
+        date = date.replace(/-/g, '/')
+        let today = this.today()
+        if (date <= today) {
+          wx.showToast({
+            title: '时间选择错误',
+            icon: 'none'
+          })
+          return
+        }
+        wx.setStorage({
+          key: TIMER_NEXT_DATE_KEY,
+          data: date
+        })
+        wx.showToast({
+          title: '设置成功',
+          icon: 'success'
+        })
+        this.$parent.data.timeInfo.allSecondsLeft = this.calDiffSecond(date)
+        this.showModelSwitch = !this.showModelSwitch
+      },
       closeModel() {
         this.showModelSwitch = !this.showModelSwitch
       },
@@ -159,11 +205,15 @@
         if (+period === 3) {
           let year = date.getFullYear() + 1
           let nextDate = year.toString() + '/01/01'
-          console.log(nextDate)
           wx.setStorage({
             key: TIMER_NEXT_DATE_KEY,
             data: nextDate
           })
+          wx.showToast({
+            title: '设置成功',
+            icon: 'success'
+          })
+          this.$parent.data.timeInfo.allSecondsLeft = this.calDiffSecond(nextDate)
           this.showModelSwitch = !this.showModelSwitch
           return
         }
@@ -193,6 +243,12 @@
           key: TIMER_NEXT_DATE_KEY,
           data: nextDate
         })
+        wx.showToast({
+          title: '设置成功',
+          icon: 'success'
+        })
+        this.date = this.today()
+        this.$parent.data.timeInfo.allSecondsLeft = this.calDiffSecond(nextDate)
         this.showModelSwitch = !this.showModelSwitch
       }
     }
@@ -202,6 +258,24 @@
       if (period !== '') {
         this.periodActive[+period] = true
       }
+      this.date = this.today()
+      console.log(this.$parent.data)
+    }
+    
+    today () {
+      let today = new Date()
+      let day = today.getDate()
+      if (day < 10) {
+        day = '0' + day
+      }
+      return today.getFullYear() + '/' + (+today.getMonth() + 1) + '/' + day
+    }
+    
+    calDiffSecond (date) {
+      let today = new Date()
+      let next = new Date(date)
+      let diffSec = (next.getTime() - today.getTime()) / 1000
+      return diffSec.toFixed()
     }
   }
 </script>

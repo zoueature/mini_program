@@ -1,12 +1,27 @@
 <template>
-  <div class="container">
+  <div class="container" @touchstart="touchStart" @touchend="touchEnd">
     <zhezhao :show.sync="periodModelSwitch"></zhezhao>
     <div wx:if="{{step == 1}}">
 <!--      根分类选项页-->
-      <div class="flag-cate-line" wx:for="{{cateList}}" wx:for-index="index" wx:for-item="cateArr">
-        <div wx:for="{{cateArr}}" wx:for-index="index" wx:for-item="cate" @tap="goSecond({{cate.categoryId}})">
-          <div class="flag-cate-column" style="background-image: url({{cate.categoryImg}}); background-size: 100% 100%;background-repeat: no-repeat">
-            <div class="remove-button" catchtap="deleteCate({{cate.categoryId}})" wx:if="{{showRemoveButton}}">
+      <div class="flag-cate-line"
+           wx:for="{{cateList}}"
+           wx:key="index"
+           wx:for-index="index"
+           wx:for-item="cateArr">
+        <div wx:for="{{cateArr}}"
+             wx:for-index="index_column"
+             wx:key="categoryId"
+             wx:for-item="cate">
+          <div wx:if="{{cate.categoryId === -1 && !showRemoveButton}}"
+               class="flag-cate-column plus-item">
+            <i class="fa fa-plus"></i>
+          </div>
+          <div wx:elif="{{cate.categoryId > 0}}" class="flag-cate-column"
+               @tap="goSecond({{cate.categoryId}})"
+               style="background-image: url({{cate.categoryImg}}); background-size: 100% 100%;background-repeat: no-repeat">
+            <div class="remove-button"
+                 catchtap="deleteCate({{cate.categoryId}})"
+                 wx:if="{{showRemoveButton}}">
               <i class="fa fa-window-minimize"></i>
             </div>
             <span>{{cate.categoryName}}</span>
@@ -15,7 +30,11 @@
       </div>
     </div>
     <div wx:elif="{{step == 2}}">
-      <div wx:for="{{taskList}}" class="flag-child-cate-item" @tap="goThird({{item.taskId}})">
+      <div wx:for="{{taskList}}"
+           wx:key="taskId">
+        <div wx:if="{{item.taskId > 0}}"
+             class="flag-child-cate-item"
+             @tap="goThird({{item.taskId}})">
           <div class="flag-child-cate-item-icon">
             <image src="{{item.taskImg}}"></image>
           </div>
@@ -25,6 +44,17 @@
           <div class="flag-child-cate-item-go">
             <i class="fa fa-angle-right"></i>
           </div>
+        </div>
+        <div wx:else>
+          <div class="flag-child-cate-item task-add">
+            <div class="flag-child-cate-item-icon">
+              <i class="fa  fa-plus"></i>
+            </div>
+            <div class="flag-child-cate-item-name">
+              <span>添加任务</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div wx:else>
@@ -37,7 +67,7 @@
             选择打卡时间
           </span>
           <span wx:else class="showPeriod">
-            <span wx:for="{{weekdayNameSelect}}">
+            <span wx:for="{{weekdayNameSelect}}" wx:key="index">
               {{[item != undefined ? item : '']}}
             </span>
           </span>
@@ -108,7 +138,7 @@
         <i class="fa fa-check"></i>
       </div>
       <div wx:else @tap="remove">
-        <i class="fa fa-plus"></i>
+        <i class="fa fa-pencil"></i>
       </div>
     </div>
   </div>
@@ -130,7 +160,7 @@
     width: 124rpx;
     height: 124rpx;
     border-radius: 124rpx;
-    border: 1rpx solid #00c7cc;
+    /*border: 1rpx solid #00c7cc;*/
     background: #FFFFFF;
     margin-top: 13rpx;
     float: left;
@@ -151,7 +181,9 @@
     position: relative;
   }
   .flag-child-cate-item div {
+    font-size: 14px;
     position: absolute;
+    color: #555555;
     /*float: left;*/
   }
   .flag-child-cate-item-icon {
@@ -294,7 +326,7 @@
     width: 100rpx;
     height: 100rpx;
     position: fixed;
-    bottom: 245rpx;
+    bottom: 7%;
     left: 0;
     right: 0;
     margin: auto;
@@ -302,7 +334,7 @@
     border-radius: 100rpx;
     line-height: 100rpx;
     text-align: center;
-    font-size: 30px;
+    font-size: 20px;
     color: #aaaaaa;
   }
   .remove-button {
@@ -317,6 +349,19 @@
     font-size: 12px;
     line-height: 28rpx;
     text-align: center;
+  }
+  .plus-item {
+    color: #888888;
+    border: 1rpx solid #cccccc;
+    font-size: 20px;
+  }
+  .task-add .flag-child-cate-item-icon{
+    background: #ffffff;
+    border: 1rpx solid #cccccc;
+    text-align: center;
+    line-height: 90rpx;
+    font-size: 16px;
+    color: #aaaaaa;
   }
 </style>
 
@@ -349,6 +394,7 @@
     '星期五',
     '星期六'
   ]
+  const MAX_CATE_NUM = 25
   
   export default class create extends wepy.page {
     config = {
@@ -378,7 +424,8 @@
         [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100],
         ['分钟','小时', '个', '组']
       ],
-      checkTimesSelect: 1
+      checkTimesSelect: 1,
+      touchStart: {}
     }
     onLoad(options) {
       this.isRoot = options.id == undefined ? true : false
@@ -409,9 +456,16 @@
     formatCateList(cateList) {
       let formatCate = []
       let tmpCate = []
-      for (let i = 1; i <= cateList.length; i++) {
-        tmpCate.push(cateList[i - 1])
-        if (i %5 === 0 || i === +cateList.length) {
+      let formatList = cateList.slice(0)
+      if (formatList.length < MAX_CATE_NUM) {
+        //分类增加框
+        formatList.push({
+          categoryId: -1
+        })
+      }
+      for (let i = 1; i <= formatList.length; i++) {
+        tmpCate.push(formatList[i - 1])
+        if (i %5 === 0 || i === +formatList.length) {
           formatCate.push(tmpCate)
           tmpCate = []
         }
@@ -425,8 +479,14 @@
           for (let j = 0; j < this.cateList[i].length; j ++) {
             if (id === this.cateList[i][j].categoryId) {
               this.flagInfo.cateInfo = this.cateList[i][j]
-              this.taskList = this.cateList[i][j].task
-              this.$apply()
+              if (this.cateList[i][j].task == undefined) {
+                this.taskList = []
+              } else {
+                this.taskList = this.cateList[i][j].task.slice(0)
+              }
+              this.taskList.push({
+                taskId: -1
+              })
               got = true
               break
             }
@@ -436,6 +496,7 @@
           }
         }
         this.step = STEP_CHILD
+        this.showRemoveButton = false
       },
       goThird(id) {
         for (let i = 0; i < this.taskList.length; i ++) {
@@ -447,12 +508,12 @@
         this.flagInfo.period = this.periodSelect
         this.flagInfo.task = this.taskSelect
         this.step = STEP_FORM
+        this.showRemoveButton = false
       },
       periodSelectorChange(value) {
         let chandeDetail = value.detail
         let column = chandeDetail.column
         let line = chandeDetail.value
-        console.log(column, line)
         if (column === 0 && line < this.periodSelector[0].length) {
           this.periodSelector[column + 1] = this.periodAll[column][line]
           this.periodSelect[column + 1] = 0
@@ -518,7 +579,6 @@
             })
           }
         })
-        //console.log(this.flagInfo)
       },
       showPeriodModel() {
         this.periodModelSwitch = !this.periodModelSwitch
@@ -590,7 +650,6 @@
         })
       },
       removeOrAddButton() {
-        console.log(this.showRemoveButton)
         if (this.showRemoveButton) {
           this.showRemoveButton = false
           return null
@@ -601,6 +660,21 @@
       selectCheckTimes(value) {
         let index = +value.detail.value
         this.checkTimesSelect = index + 1
+      },
+      touchStart(e) {
+        this.touchStart = {
+          x: e.changedTouches[0].pageX,
+          y: e.changedTouches[0].pageY
+        }
+      },
+      touchEnd(e) {
+        let x = e.changedTouches[0].pageX
+        let y = e.changedTouches[0].pageY
+        if (x - this.touchStart.x > 100) {
+          if (this.step > STEP_ROOT) {
+            this.step --
+          }
+        }
       }
     }
   }
