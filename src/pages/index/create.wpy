@@ -3,7 +3,7 @@
     <zhezhao :show.sync="periodModelSwitch"></zhezhao>
     <div wx:if="{{step == 1}}">
 <!--      根分类选项页-->
-      <div class="flag-cate-line"
+      <div class="flag-cate-line {{[showCreateModel ? 'blur' : '']}}"
            wx:for="{{cateList}}"
            wx:key="index"
            wx:for-index="index"
@@ -13,6 +13,7 @@
              wx:key="categoryId"
              wx:for-item="cate">
           <div wx:if="{{cate.categoryId === -1 && !showRemoveButton}}"
+               catchtap="showModel"
                class="flag-cate-column plus-item">
             <i class="fa fa-plus"></i>
           </div>
@@ -25,6 +26,33 @@
               <i class="fa fa-window-minimize"></i>
             </div>
             <span>{{cate.categoryName}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="model-zhezhao" wx:if="{{showCreateModel}}" catchtap="showModel">
+        <div class="cate-add-model {{[showIconList ? 'blur' : '']}}" catchtap="doNone">
+          <div class="cate-icon-select" catchtap="showIcon">
+            <image src="http://img4.imgtn.bdimg.com/it/u=1097150596,2415037122&fm=26&gp=0.jpg" alt=""></image>
+          </div>
+          <div class="cate-name-input">
+            <input type="text"
+                   placeholder="输入分类名"
+                   placeholder-class="placeholder"
+                   class="cate-input"
+                   focus="true">
+          </div>
+          <div class="button-container">
+            <button class="button" type="primary"><i class="fa fa-check"></i></button>
+            <button class="button" type="warn"><i class="fa fa-times"></i></button>
+          </div>
+        </div>
+        <div wx:if="{{showCreateModel && showIconList}}"
+             catchtap="showIcon"
+             class="show-icon-list">
+          <div class="icon-show-item">
+            <div class="icon-show">
+              <image src="http://img4.imgtn.bdimg.com/it/u=1097150596,2415037122&fm=26&gp=0.jpg" alt=""></image>
+            </div>
           </div>
         </div>
       </div>
@@ -133,7 +161,7 @@
         立下FLAG
       </button>
     </div>
-    <div class="add-button" wx:if="{{step === 1 || step === 2}}">
+    <div class="add-button" wx:if="{{(step === 1 || step === 2) && !showCreateModel}}">
       <div wx:if="{{showRemoveButton}}" @tap="removeOrAddButton">
         <i class="fa fa-check"></i>
       </div>
@@ -195,7 +223,7 @@
     border-radius: 90rpx;
     overflow: hidden;
   }
-  .flag-child-cate-item-icon image {
+  .flag-child-cate-item-icon image,.icon-show-item image {
     width: 100%;
     height: 100%;
   }
@@ -363,11 +391,124 @@
     font-size: 16px;
     color: #aaaaaa;
   }
+  .model-zhezhao {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(244, 244, 244, 0.7);
+    top: 0;
+    left: 0;
+  }
+  .cate-add-model {
+    width: 450rpx;
+    height: 550rpx;
+    /*background: red;*/
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 25rpx;
+    animation: modelzoom 500ms;
+    background: #FFFFFF;
+  }
+  @keyframes modelzoom {
+    from {
+      height: 0;
+    }
+    to {
+      height: 550rpx;
+    }
+  }
+  .cate-icon-select {
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 100rpx;
+    overflow: hidden;
+    margin:  45rpx auto;
+  }
+  .cate-icon-select image {
+    width: 100%;
+    height: 100%;
+  }
+  .placeholder {
+    color: #999999;
+    font-size: 25rpx;
+  }
+  .cate-name-input {
+    width: 80%;
+    height: 70rpx;
+    margin: 65rpx auto;
+    border: 1rpx solid #cecece;
+    border-radius: 15rpx;
+  }
+  .cate-input {
+    padding-left: 25rpx;
+    height: 70rpx;
+    line-height: 70rpx;
+    color: #777777;
+    font-size: 25rpx;
+  }
+  .button-container {
+    width: 90%;
+    height: 100rpx;
+    margin: 0 auto;
+  }
+  .button {
+    width: 120rpx;
+    height: 66rpx;
+    border-radius: 100rpx;
+    overflow: hidden;
+    border: none;
+    float: left;
+    margin-left: 13%;
+    line-height: 66rpx;
+    text-align: center;
+    color: #FFFFFF;
+  }
+  .button:-moz-first-node {
+    background: greenyellow;
+  }
+  .show-icon-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    z-index: 100;
+    animation: fromBottom 400ms;
+    background: rgba(240,240,240,0.8);
+  }
+  @keyframes fromBottom {
+    from {
+      top: 100%;
+    }
+    to {
+      top: 0;
+    }
+  }
+  .icon-show-item {
+    width: 20%;
+    padding-top: 20%;
+    position: relative;
+    float: left;
+    margin-top: 15rpx;
+    overflow: hidden;
+  }
+  .icon-show {
+    position: absolute;
+    border-radius: 1000rpx;
+    overflow: hidden;
+    width: 76%;
+    height: 76%;
+    top: 12%;
+    left: 12%;
+  }
+  .blur {
+    filter: blur(10rpx)
+  }
 </style>
-
-<config>
-
-</config>
 <script>
   import wepy from 'wepy'
   import api from '../../comm/api'
@@ -408,6 +549,8 @@
     data = {
       periodModelSwitch: false,
       showRemoveButton: false,
+      showCreateModel: false,
+      showIconList: false,
       weekdaySelect: [],
       weekdayNameSelect: [],
       activeWeekdayItem: [
@@ -473,6 +616,9 @@
       return formatCate
     }
     methods = {
+      doNone() {
+      
+      },
       goSecond(id) {
         let got = false
         for (let i = 0; i < this.cateList.length; i ++) {
@@ -675,6 +821,12 @@
             this.step --
           }
         }
+      },
+      showModel() {
+        this.showCreateModel = !this.showCreateModel
+      },
+      showIcon() {
+        this.showIconList = !this.showIconList
       }
     }
   }
